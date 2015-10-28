@@ -7,6 +7,7 @@ def details(request):
 	'site_url': settings.SITE_URL,
 	'site_name': settings.SITE_NAME,
 	'site_version': settings.SITE_VERSION,
+	'SITE_NAME_SHORT': settings.SITE_NAME_SHORT,
 	}
 
 # def next_message(request, message_id):

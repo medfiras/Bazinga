@@ -230,6 +230,7 @@ ANONYMOUS_USER_ID = -1
 # Test runner
 TEST_RUNNER = 'django_coverage.coverage_runner.CoverageRunner'
 
-SITE_NAME='Bazinga Name'
+SITE_NAME_SHORT = 'BZ'
+SITE_NAME='Bazinga'
 SITE_URL='http://www.your-site-url.com'
 SITE_VERSION='1.0'
