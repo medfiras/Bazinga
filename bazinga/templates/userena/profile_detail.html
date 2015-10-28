@@ -1,0 +1,181 @@
+{% extends 'userena/base_userena.html' %}
+{% load i18n %}
+{% load url from future %}
+{% load staticfiles %}
+
+{% block title %}{{ profile.user.username }}'s {% trans "profile" %}.{% endblock %}
+{% block content_title %}<h2 class="content-title">{{ profile.user.username }} {% if profile.user.get_full_name %}({{ profile.user.get_full_name }}){% endif %}</h2>{% endblock %}
+
+{% block content %}
+<link href="{% static "css/profile.css" %}" rel="stylesheet">
+<!-- ######################################################################################## -->
+{% include "navbar.html" %}
+<div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                   <div class="main-header page-header">
+                                <h2>Profile</h2>
+                                <em><b>{{ profile.user.username }}</b> profile page</em>
+                            </div>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <!-- <div class="panel panel-default"> -->
+                        
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="main-content">
+                                <!-- NAV TABS -->
+                                <ul class="nav nav-tabs">
+                                    <li class="active"><a data-toggle="tab" href="#profile-tab"><i class="fa fa-user"></i> Profile</a></li>
+                                    <li class=""><a data-toggle="tab" href="#activity-tab"><i class="fa fa-rss"></i> Recent Activity</a></li>
+                                    <!-- <li class=""><a data-toggle="tab" href="#settings-tab"><i class="fa fa-gear"></i> Settings</a></li> -->
+                                </ul>
+                                <!-- END NAV TABS -->
+                                
+                                <div class="tab-content profile-page">
+                                    <!-- PROFILE TAB CONTENT -->
+                                    <div id="profile-tab" class="tab-pane profile active">
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="user-info-left">
+                                                    <img alt="Profile Picture" src="{{ profile.get_mugshot_url }}">
+                                                    <h2>{{ profile.user.username }}</h2>
+                                                    <div class="contact">                                                        
+                                                        <ul class="list-inline social">
+                                                            <li>
+                                                                <a title="Facebook" href="{{ profile.facebook}}">
+                                                                    <i class="fa fa-facebook-square"></i>
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a title="Twitter" href="{{ profile.twitter}}">
+                                                                    <i class="fa fa-twitter-square"></i>
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a title="Google Plus" href="{{ profile.googleplus}}">
+                                                                    <i class="fa fa-google-plus-square"></i>
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a title="Github" href="{{ profile.github}}">
+                                                                    <i class="fa fa-github-square"></i>
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                        {% if user.username == profile.user.username %}
+                                                        <p class="text-center more">
+                                                            <a class="btn btn-custom-primary" href="{% url 'userena_profile_edit' user.username %}"><i class="fa fa-edit"></i> Edit Profile</a>
+                                                        </p>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-9">
+                                                <div class="user-info-right">
+                                                    <div class="basic-info">
+                                                        <h3><i class="fa fa-square"></i> Basic Information</h3>
+                                                        <p class="data-row">
+                                                            <span class="data-name">Username</span>
+                                                            <span class="data-value">{{ profile.user.username }}</span>
+                                                        </p>
+                                                        <p class="data-row">
+                                                            <span class="data-name">First name</span>
+                                                            <span class="data-value">{{ profile.user.first_name }}</span>
+                                                        </p>
+                                                        <p class="data-row">
+                                                            <span class="data-name">Last name</span>
+                                                            <span class="data-value">{{ profile.user.last_name }}</span>
+                                                        </p>
+                                                        <p class="data-row">
+                                                            <span class="data-name">Birth Date</span>
+                                                            <span class="data-value">{{ profile.birth_date|date:"d/m/Y" }}</span>
+                                                        </p>
+                                                        <p class="data-row">
+                                                            <span class="data-name">Gender</span>
+                                                            <span class="data-value">{{ profile.gender}}</span>
+                                                        </p>
+                                                        <p class="data-row">
+                                                            <span class="data-name">Website</span>
+                                                            <span class="data-value"><a href="{{ profile.website}}">{{ profile.website}}</a></span>
+                                                        </p>
+                                                        <p class="data-row">
+                                                            <span class="data-name">Last Login</span>
+                                                            <span class="data-value">{{ profile.user.last_login }}</span>
+                                                        </p>
+                                                        <p class="data-row">
+                                                            <span class="data-name">Date Joined</span>
+                                                            <span class="data-value">{{ profile.user.date_joined }}</span>
+                                                        </p>
+                                                    </div>
+                                                    <div class="contact_info">
+                                                        <h3><i class="fa fa-square"></i> Contact Information</h3>
+                                                        <p class="data-row">
+                                                            <span class="data-name">Email</span>
+                                                            <span class="data-value">{{ profile.user.email }}</span>
+                                                        </p>
+                                                        <p class="data-row">
+                                                            <span class="data-name">Phone</span>
+                                                            <span class="data-value">(+216) 22781934</span>
+                                                        </p>
+                                                        <p class="data-row">
+                                                            <span class="data-name">Address</span>
+                                                            <span class="data-value">{{ profile.address }}</span>
+                                                        </p>
+                                                    </div>
+                                                    <div class="about">
+                                                        <h3><i class="fa fa-square"></i> About Me</h3>
+                                                        <p>{{ profile.about }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- END PROFILE TAB CONTENT -->
+
+                                    <!-- ACTIVITY TAB CONTENT -->
+                                    <div id="activity-tab" class="tab-pane activity">
+                                        <ul class="list-unstyled activity-list">
+                                            <li>
+                                                <i class="fa fa-magic activity-icon activity-icon-blue pull-left"></i>
+                                                <p>
+                                                    New checkin created : <span class="label label-info">checkin 1</span> <span class="timestamp">12 minutes ago</span>
+                                                </p>
+                                            </li>
+                                            
+                                            <li>
+                                                <i class="fa fa-thumbs-up activity-icon activity-icon-green pull-left"></i>
+                                                <p>
+                                                    Checkin  <span class="label label-success">checkin 1</span> compleated<span class="timestamp">December 12</span>
+                                                </p>
+                                            </li>
+                                           
+                                        </ul>
+                                        <p class="text-center more"><a class="btn btn-custom-primary" href="#">View more <i class="fa fa-long-arrow-right"></i></a></p>
+                                    </div>
+                                    <!-- END ACTIVITY TAB CONTENT -->
+
+                                    
+                                    <!-- END SETTINGS TAB CONTENT -->
+                                </div>
+
+                            </div>
+                        </div>
+                        <!-- /.panel-body -->
+                    <!-- </div> -->
+                    
+                    
+                </div>
+                <!-- /.col-lg-8 -->
+                
+            </div>
+           
+
+        </div>
+
+
+{% endblock %}

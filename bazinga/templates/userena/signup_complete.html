@@ -1,0 +1,44 @@
+{% extends 'userena/base_userena.html' %}
+{% load i18n %}
+
+{% load staticfiles %}
+{% load widget_tweaks %}
+
+
+{% block title %}{% trans "Signup almost done!" %}{% endblock %}
+
+{% block content_title %}<h2>{% trans "Signup" %}</h2>{% endblock %}
+
+{% block content %}
+{% include "navbar.html" %}
+
+<div id="page-wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="main-header page-header">
+                <h2>{% trans "Signup Complete" %}</h2>
+            </div>
+        </div>         
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel-body">
+                <div class="main-content">
+                    <div class="row">
+                        <p>{% trans "Thank you for signing up with us!" %}</p>
+
+						{% if userena_activation_required %}
+							<p>{% blocktrans %}You have been sent an e-mail with an activation link to the supplied email.{% endblocktrans %}</p>
+							<p>{% blocktrans %}We will store your signup information for {{ userena_activation_days }} days on our server. {% endblocktrans %}</p>
+							{% else  %}
+							<p>{% blocktrans %}You can now use the supplied credentials to signin.{% endblocktrans %}</p>
+						{% endif %}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,123 @@
+{% extends "django_messages/base.html" %}
+{% load i18n %}
+{% load url from future %}
+{% load staticfiles %}
+{% block content %}
+
+<script type="text/javascript" src="{% static "js/jquery.openCarousel.js" %}"></script> 
+<link rel="stylesheet" href="{% static "css/clndr.css" %}" type="text/css" />
+<script src="{% static "js/moment-2.2.1.js" %}" type="text/javascript"></script>
+<script src="{% static "js/clndr.js" %}" type="text/javascript"></script>
+<script src="{% static "js/site.js" %}" type="text/javascript"></script>
+<link rel="stylesheet" href="{% static "css/easyTree.css" %}">
+<link rel="stylesheet" href="{% static "css/easyTree.css" %}">
+
+<div id="wrapper">
+    {% include "navbar.html" %}
+    <div id="page-wrapper">
+        
+        	<div class="col-lg-3 easy-tree" style="padding-left:0px; padding-right:0px;padding-bottom: 0px;">
+        			<!-- <div class="easy-tree"> -->
+        			<div class="user-head">
+                          <a class="inbox-avatar" href="javascript:;">
+                              <img alt="Avatar" src="{{ user.get_profile.get_mugshot_url }}">
+                          </a>
+                          <div class="user-name">
+                              <h5><a href="#">{{ user.get_full_name }}</a></h5>
+                              <span><a href="{% url 'userena_profile_detail' user.username %}">{{ user.username }}</a></span>
+                          </div>
+                          <a class="mail-dropdown pull-right" href="javascript:;">
+                              <i class="fa fa-chevron-down"></i>
+                          </a>
+                      </div>
+						<ul>
+							<li>
+								<span>									
+									<span class="glyphicon glyphicon-envelope"></span>
+									<a href="{% url 'messages_inbox' %} ">&raquo;&nbsp;{% trans "Inbox" %} <span class="label label-danger pull-right badge-message">{{ messages_inbox_count }}</span></a>
+									
+								</span>
+							</li>
+							<li>
+								<span>
+									<i class="fa fa-paper-plane"></i>
+									<a href="{% url 'messages_outbox' %} ">&raquo;&nbsp;{% trans "Sent Messages" %}</a>
+								</span>
+							</li>
+							<li>
+								<span>
+									<i class="fa fa-pencil-square-o"></i>
+									<a href="{% url 'messages_compose' %} ">&raquo;&nbsp;{% trans "New Message" %}</a>
+								</span>
+							</li>
+							<li class="li_selected">
+								<span>
+									<i class="fa fa-trash"></i>
+									<a href="{% url 'messages_trash' %} ">&raquo;&nbsp;{% trans "Trash" %}</a>
+								</span>
+							</li>
+						</ul>
+					<!-- </div> -->
+        		<div class="col-lg-12 cal1"> </div>
+        	</div>
+        	<div class="col-lg-9" style="padding-left:0px; padding-right:0px;">
+        		<div class="inbox-head">
+        			<h3 style="margin-bottom: 0; margin-top: 10px;">{% trans "Deleted Messages" %}</h3>
+        		</div>
+
+<div class="inbox-body">
+        		<div class="alert alert-warning alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    {% trans "Deleted Messages are removed from the trash at unregular intervals, don't rely on this feature for long-time storage." %}
+                </div>
+        		
+        			<table class="table table-striped table-bordered table-hover" id="messages-table">
+        				<thead>
+        					<tr>
+        						<th></th>
+        						<th>{% trans "Sender" %}</th>
+        						<th>{% trans "Subject" %}</th>
+        						<th>{% trans "Date" %}</th>
+        						<th>{% trans "Action" %}</th>
+        					</tr>
+        				</thead>
+        				<tbody>
+        					{% if message_list %}
+        						{% for message in message_list %}
+        							<tr class="odd gradeX">
+        								<td></td>
+        								<td>
+        									<a href="{% url 'userena_profile_detail' message.sender %}">{{ message.sender }}</a>
+        								</td>
+        								<td>
+        									<a href="{{ message.get_absolute_url }}">{{ message.subject }}</a>
+        								</td>
+        								<td>{{ message.sent_at|date:_("DATETIME_FORMAT") }}</td>
+        								<td><a href="{% url 'messages_undelete' message.id %}">{% trans "undelete" %}</a></td>
+        							</tr>
+        						{% endfor %}   
+        					{% else %}
+        						<tr class="odd gradeX">
+        							<td colspan="5">
+        								<h4 style="text-align: center;">{% trans "No messages." %}</h4>
+        							</td>
+        						</tr> 
+        					{% endif %}                        
+        				</tbody>
+        			</table>
+        		
+        	</div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static "js/plugins/dataTables/jquery.dataTables.js" %}"></script>
+<script src="{% static "js/plugins/dataTables/dataTables.bootstrap.js" %}"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#messages-table').dataTable();
+    });
+</script>
+
+{% endblock %}

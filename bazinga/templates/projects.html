@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load url from future %}
+{% load staticfiles %}
+{% load widget_tweaks %}
+
+{% block content %}
+
+
+<link href="{% static "css/projects.css" %}" rel="stylesheet">
+<!-- ######################################################################################## -->
+{% include "navbar.html" %}
+<div id="page-wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="main-header page-header">
+                <h2>{% trans "Projects List" %}</h2>
+               {% comment %}
+               {% for repo in git %}
+                {{repo.name}} ==> {{repo.created_at}} ==> {{repo.open_issues}} ===> {{repo.open_issues_count}} ===> {{repo.get_contributors}} <br/>
+                {% endfor %}
+                {% endcomment %}
+                
+
+            </div>
+        </div>
+                <!-- /.col-lg-12 -->
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel-body">
+                <div class="main-content">
+                    
+                    <div class="row">
+                        {% for project in data %}
+            <div class="col-md-6">
+                <div class="widget widget-primary widget-small">
+                    <div class="innerAll">
+                        <div class="media">
+                            <div class="pull-left innerR half">
+                                <a href="{{ project.html_url}}">
+                                <i class="fa fa-github-alt fa-4x icon-faded"></i></a>
+                            </div>
+                            <div class="media-body ">
+                                <h4><a class="media-heading" href="{% url 'get_repo_details' %}?repo={{project.name}}">{{ project.name}}</a></h4>
+                                <p class="margin-none text-muted">{{ project.description|truncatechars:50 }}</p>
+                            </div>
+                        </div>
+                            <form role="form" class="form-horizontal">
+                            <div class="widget widget-none bg-gray innerAll half margin-slim">
+                                    <div class="row">
+                                        <labell class="col-sm-3 control-labell text-left">Progress:</labell>
+                                        <div class="col-md-4 col-sm-6 col-xs-10 innerT half">
+                                            <div class="progress progress-mini">
+                                                <div style="width: 20%;" class="progress-bar progress-bar-primary"></div>
+                                            </div>
+                                        </div>
+                                        <labell class="control-labell text-left strong text-muted-dark">20 %</labell>
+                                    </div>
+                                </div>
+
+                                <div class="widget widget-none bg-gray innerAll half margin-slim">
+                                    <div class="row">
+                                        <labell class="col-sm-3 control-labell text-left padding-top-none">Forks:</labell>
+                                        <div class="col-md-4 col-sm-6 col-xs-10 strong">
+                                            <span class="labell labell-info"> {{project.forks}} </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="widget widget-none bg-gray innerAll half margin-slim">
+                                    <div class="row">
+                                        <labell class="col-sm-3 control-labell text-left">Status:</labell>
+                                        <div class="col-md-4 col-sm-6 col-xs-10">
+                                            {% if project.private %}
+                                             <span class="labell labell-primary strong"> <i class="fa fa-lock"></i> Private </span>
+                                             {% else %}
+                                             <span class="labell labell-success strong"><i class="fa fa-unlock"></i> Public </span>
+                                                
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="widget widget-none bg-gray innerAll half margin-slim">
+                                    <div class="row">
+                                        <labell class="col-sm-3 control-labell text-left">Due Date:</labell>
+                                        <div class="col-md-5 col-sm-6 col-xs-10">
+                                            <span class="text-small"><i class="fa fa-clock-o text-muted"></i>  </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="widget widget-none bg-gray innerAll half margin-slim">
+                                    <div class="row">
+                                        <labell class="col-sm-3 control-labell text-left innerT">Owner:</labell>
+                                        <div class="col-md-4 col-sm-6 col-xs-10">
+                                            <a href="">
+                                                {{project.owner.login}}</a>                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+                    </div>
+                </div>
+            </div>
+           {% endfor %}
+
+
+                   
+                </div>
+
+
+              
+        <ul class="pagination">
+            {% if data.has_previous %}
+                <li><a href="?page={{ data.previous_page_number }}">&laquo;</a></li>
+                {% else %}
+                    <li class="disabled prev"><span href="">&laquo;</span></li>
+            {% endif %}
+            
+            
+            {% for num in data.paginator.page_range %}
+                {% ifequal num data.number %}
+                  <li class="current page active"><a href="#">{{ num }}</a></li>
+                {% else %}
+                  <li><a href="?page={{ num }}" class="page">{{ num }}</a></li>
+                {% endifequal %}
+              {% endfor %}
+
+            {% if data.has_next %}
+                <li><a href="?page={{ data.next_page_number }}">&raquo;</a></li>
+                {% else %}
+                    <li class="disabled next"><a href="">&raquo;</a></li>
+            {% endif %}
+            <li class="disabled">
+                <span> Page {{ data.number }} of {{ data.paginator.num_pages }}</span>
+            </li>
+        </ul>
+    
+
+
+           
+        </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% load url from future %}
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+    	<meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	    <title>Bazinga - Community Portal</title>
+
+	    <!-- Core CSS - Include with every page -->
+	    {% block styles %}{% endblock %}
+
+	    <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}">
+	   
+	   <!-- fullCalendar 2.2.5-->
+    <link rel="stylesheet" href="{% static "css/plugins/fullcalendar/fullcalendar.min.css" %}">
+    <link rel="stylesheet" href="{% static "css/plugins/fullcalendar/fullcalendar.print.css" %}" media="print">
+	    <link href="{% static "css/AdminLTE.css" %}" rel="stylesheet">
+	    <link href="{% static "css/_all-skins.css" %}" rel="stylesheet">
+	    <link rel="stylesheet" href="{% static "css/skin-blue.css" %}">
+	    
+	    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+	    <!-- jQuery 2.1.4 -->
+	    <script src="{% static "css/plugins/jQuery/jQuery-2.1.4.min.js" %}"></script>
+	    <!-- Bootstrap 3.3.5 -->
+	    
+	    <!-- AdminLTE App -->
+	    <script src="{% static "js/app.js" %}"></script>
+	     
+	</head>
+
+
+
+ 	<body class="hold-transition skin-blue sidebar-mini">
+   
+        {% block content %}{% endblock %}
+
+    </body>
+</html>

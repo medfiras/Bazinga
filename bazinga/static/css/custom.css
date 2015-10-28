@@ -1,0 +1,32 @@
+.user_avatar {
+    border: 3px solid #ebedef;
+    border-radius: 50%;
+    display: block;
+    float: left;
+    height: 60px;
+    margin: 10px;
+    width: 60px;
+}
+.date_joined{
+	color: gray;
+    float: right;
+    font-family: inherit;
+    font-size: 12px;
+    font-style: oblique;
+    position: relative;
+    padding-right: 10px;
+}
+.profile-list{
+
+	margin-right: 15px;
+	background-color: #fff;
+    background-image: linear-gradient(to bottom, #fff 0px, #f4f4f4 100%);
+    border: medium none;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    display: block;
+    font-size: 12px;
+    padding: 5px;
+    margin-bottom: 15px;
+}

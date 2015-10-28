@@ -1,0 +1,280 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load url from future %}
+{% load staticfiles %}
+{% load widget_tweaks %}
+
+{% block content %}
+
+
+<link href="{% static "css/projects.css" %}" rel="stylesheet">
+<!-- ######################################################################################## -->
+{% include "navbar.html" %}
+<div id="page-wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="pull-left">Project :: {{data.name}} <a href="{{ data.html_url}}">
+                                <i class="fa fa-github-alt"></i></a></h1>
+            <div class="innerT pull-right">
+                <a class="btn btn-danger" href="{% url 'get_repo_info' %}">Back to projects</a>
+            </div>
+        </div>
+                <!-- /.col-lg-12 -->
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel-body">
+                <div class="main-content">                
+                    <div class="row">
+                        <div class="widget widget-none">
+                            <div class="widget-body">
+                                <fieldset>
+                                    <legend>Description : </legend>
+                                    <p class="lead">{{data.description}}</p>
+                                </fieldset>
+                                {% for ln in language_data %}
+                                    <span class="label label-danger">{{ln}}</span>  
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                        <div class="widget">
+                            <div class="widget-head">
+                                <div class="heading">Recent Activity</div>
+                            </div>
+                            <div class="widget-body padding-none">
+                                <ul class="timeline-activity project list-unstyled">
+                                    {% for act in activity_data %}
+                                    <li class="">
+                                        <span class="list-date">
+                                            <span class="day">{{act.created_at|slice:"8:10"}}</span>
+                                            <span class="month">{{act.created_at|slice:"5:7"}}</span>
+                                        </span>
+                                        <div class="block block-inline">
+                                            <div class="caret"></div>
+                                            <div class="">
+                                            <div class="media media-size">
+                                                <a href="#" class="pull-left">
+                                                    <img width="45" alt="..." src="{{act.actor.avatar_url}}" class="media-object img-rounded hidden-xs">
+                                                </a>
+                                                <div class="media-body media-body-size">
+                                                    <a class="media-heading innerR " href="">{{act.actor.login}}</a>
+                                                    <span class="label label-info">{{act.type}}</span>
+                                                    {% if act.type == "PushEvent" %}
+                                                    <labell class="labell labell-default"># {{act.payload.size}} </labell>
+                                                    <!-- <labell class="labell labell-primary">
+                                                        <a class="text-primary" href="#">
+                                                            <i class="fa fa-reply"></i>
+                                                        </a>
+                                                    </labell> -->
+                         
+                                                    <labell class="labell labell-success">
+                                                        <!-- <a class="text-success" href=""> -->
+                                                            <i class="fa fa-cloud-upload"></i> Commits 
+                                                        <!-- </a>  -->
+                                                    </labell> 
+                                                    <div class="clearfix"></div>
+                                                    {% for cmt in act.payload.commits %}
+                                                    <p>
+                                                    <strong>{{cmt.author.name}}</strong> {{ cmt.message }}
+                                                    </p>
+                                                    {% endfor %}
+                                                    <div class="clearfix"></div>
+                                                    {% elif act.type == "IssuesEvent" %}
+                                                        <labell class="labell labell-default"># {{ act.payload.issue.number}} </labell>
+                                                    <labell class="labell labell-primary">
+                                                        <a class="text-primary" href="{{ act.payload.issue.html_url}}">
+                                                            <i class="fa fa-reply"></i>
+                                                        </a>
+                                                    </labell>
+                         
+                                                    
+                                                        <!-- <a class="text-success" href=""> -->
+                                                            {% if act.payload.action == "closed" %}
+                                                            <labell class="labell labell-primary">
+                                                            <i class="fa fa-lock"></i> {{ act.payload.action}}
+                                                            {% else %}
+                                                            <labell class="labell labell-success">
+                                                            <i class="fa fa-unlock"></i> {{ act.payload.action}}
+                                                            {% endif %}
+                                                        <!-- </a>  -->
+                                                    </labell> 
+                                                    <div class="clearfix"></div>
+                                                     <p>{{ act.payload.issue.title}}</p>
+
+                                                        <div class="clearfix"></div>
+
+                                                    {% else %}
+                                                    <labell class="labell labell-default"># 65 </labell>
+                                                    <labell class="labell labell-primary">
+                                                        <a class="text-primary" href="#">
+                                                            <i class="fa fa-reply"></i>
+                                                        </a>
+                                                    </labell>
+                         
+                                                    <labell class="labell labell-success">
+                                                        <a class="text-success" href="">
+                                                            <i class="fa fa-lock"></i> Commits 
+                                                        </a> 
+                                                    </labell> 
+                                                    <div class="clearfix"></div>
+                                                    <strong>Milestone Title</strong> Lorem ipsum dolor sit amet, consectetur    repellendus amet distinctio inventore possimus cum dicta enim!..
+                                                    <div class="clearfix"></div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="col-md-3">
+            <div class="widget widget-primary widget-small">
+                <div class="widget-head">
+                    <div class="heading">Project Overview</div>
+                </div>
+                <div class="widget-body">
+                    <div class="row">
+                        <div class="col-xs-5 text-muted-dark">
+                            <div class="innerB half">Preview</div>
+                        </div>
+                        <div class="col-xs-7 text-inverse">
+                            <div class="innerB half"><a href="{{data.homepage}}" class="btn btn-info btn-xs"><i class="fa fa-globe"></i> Home</a></div>
+                        </div>
+                        <div class="col-xs-5 text-muted-dark">
+                            <div class="innerB half">Created</div>
+                        </div>
+                        <div class="col-xs-7 text-inverse">
+                            <div class="innerB half">{{data.created_at|slice:'10'}}</div>
+                        </div>
+                        <div class="col-xs-5 text-muted-dark">
+                            <div class="innerB half">Updated</div>
+                        </div>
+                        <div class="col-xs-7 text-inverse">
+                            <div class="innerB half">{{data.updated_at|slice:'10'}}</div>
+                        </div>
+                        <div class="col-xs-5 text-muted-dark">
+                            <div class="innerB half">Pushed</div>
+                        </div>
+                        <div class="col-xs-7 text-inverse">
+                            <div class="innerB half">{{data.pushed_at|slice:'10'}}</div>
+                        </div>
+                        <div class="col-xs-5 text-muted-dark">
+                            <div class="innerB half">Issues</div>
+                        </div>
+                        <div class="col-xs-7 text-inverse">
+                            <div class="innerB half"><i class="fa fa-unlock"></i> {{data.open_issues}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="widget widget-info widget-small">
+                <div class="widget-head">
+                    <div class="heading">Assigned Team Members</div>
+                </div>
+                <div class="widget-body padding-none">
+                    {% for contrib in contrib_data %}
+                    <div class="media innerAll half margin-none border-bottom">
+                        <div class="pull-left">
+                            <img width="40" class="img-circle media-object" alt="people" src="{{contrib.avatar_url}}">
+                        </div>
+                        <div class="media-body innerT half">
+                            <a href="{{contrib.html_url}}">{{ contrib.login }}</a>
+                        </div>
+                        <div class="pull-right">
+                             <span class="label label-danger" data-toggle="tooltip" data-placement="left" title="Number of contributions">{{ contrib.contributions}}</span>
+                        </div>
+                    </div>              
+                    {% endfor %}      
+                </div>
+            </div>
+            <!-- <div class="widget">
+                <div class="widget-head">
+                    <div class="heading">Tasks History</div>
+                </div>
+                <div class="widget-body padding-none ">
+                    <div class="innerAll half border-bottom">
+                        <div class="pull-right text-muted">12 Jan</div>
+                        <a class="text-inverse" href="project_tasks.html?v=v1.0.0-rc1"> <i class="fa fa-ticket"></i> Created 2nd level of sub...</a>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="innerAll half border-bottom">
+                        <div class="pull-right text-muted">12 Jan</div>
+                        <a class="text-inverse" href="project_tasks.html?v=v1.0.0-rc1"><i class="fa fa-ticket"></i> Changer Sidebar ver...</a>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="innerAll half border-bottom">
+                        <div class="pull-right text-muted">12 Jan</div>
+                        <a class="text-inverse" href="project_tasks.html?v=v1.0.0-rc1"><i class="fa fa-ticket"></i> More Widgets on...</a>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="innerAll half border-bottom">
+                        <div class="pull-right text-muted">12 Jan</div>
+                        <a class="text-inverse" href="project_tasks.html?v=v1.0.0-rc1"><i class="fa fa-ticket"></i> Added Job Page in...</a>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="innerAll half border-bottom">
+                        <div class="pull-right text-muted">12 Jan</div>
+                        <a class="text-inverse" href="project_tasks.html?v=v1.0.0-rc1"><i class="fa fa-ticket"></i> Another Task completed...</a>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="innerAll half border-bottom">
+                        <div class="pull-right text-muted">12 Jan</div>
+                        <a class="text-inverse" href="project_tasks.html?v=v1.0.0-rc1"><i class="fa fa-ticket"></i> Another Task completed...</a>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="innerAll half border-bottom">
+                        <div class="pull-right text-muted">12 Jan</div>
+                        <a class="text-inverse" href="project_tasks.html?v=v1.0.0-rc1"><i class="fa fa-ticket"></i> Another Task completed...</a>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="innerAll half border-bottom">
+                        <div class="pull-right text-muted">12 Jan</div>
+                        <a class="text-inverse" href="project_tasks.html?v=v1.0.0-rc1"><i class="fa fa-ticket"></i> Another Task completed...</a>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+        <div class="col-md-9">
+            <ul class="pagination">
+            {% if data.has_previous %}
+                <li><a href="?repo={{data.name}}&page={{ data.previous_page_number }}">&laquo;</a></li>
+                {% else %}
+                    <li class="disabled prev"><span href="">&laquo;</span></li>
+            {% endif %}
+            
+            
+            {% for num in activity_data.paginator.page_range %}
+                {% ifequal num activity_data.number %}
+                  <li class="current page active"><a href="#">{{ num }}</a></li>
+                {% else %}
+                  <li><a href="?repo={{data.name}}&page={{ num }}" class="page">{{ num }}</a></li>
+                {% endifequal %}
+              {% endfor %}
+
+            {% if activity_data.has_next %}
+                <li><a href="?repo={{data.name}}&page={{ activity_data.next_page_number }}">&raquo;</a></li>
+                {% else %}
+                    <li class="disabled next"><a href="">&raquo;</a></li>
+            {% endif %}
+            <li class="disabled">
+                <span> Page {{ activity_data.number }} of {{ activity_data.paginator.num_pages }}</span>
+            </li>
+        </ul>
+        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+</script>
+{% endblock %}
