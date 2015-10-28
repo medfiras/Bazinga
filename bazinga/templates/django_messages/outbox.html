@@ -107,10 +107,7 @@
                                           <td class="mailbox-star text-center"><a href="{% url 'messages_delete' message.id %}?next={% url 'messages_outbox' %}"><i class="fa fa-trash-o text-red"></i></a></td>
                                         </tr>
                                     {% endfor %}   
-                                {% else %}
-                                    <tr class="odd gradeX">
-                                        <td colspan="5"><h4 style="text-align: center;">{% trans "No messages." %}</h4></td>
-                                    </tr> 
+                                
                                 {% endif %}                           
                             </tbody>
                         </table>
