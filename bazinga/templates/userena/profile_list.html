@@ -65,7 +65,7 @@
                                     <div class="col-sm-4">
                                         <div class="description-block">
                                             <h5 class="description-header">Team</h5>
-                                            <span class="description-text">{{ user.profile.group }}</span>
+                                            <span class="description-text">{{ user.profile.team }}</span>
                                         </div><!-- /.description-block -->
                                     </div><!-- /.col -->
                                     <div class="col-sm-4 border-right">
@@ -128,8 +128,8 @@
                                         <td><a href="{% url 'userena_profile_detail' profile.user.username %}">{{ profile.user.username }}</a></td>
                                         <td>{{ profile.user.first_name }}</td>
                                         <td>{{ profile.user.last_name }}</td>
-                                        <td class="center">{{profile.user.date_joined|date:"d/m/Y - H:i"}}</td>
-                                        <td class="center">{{ user.profile.group }}</td>
+                                        <td class="center">{{profile.user.date_joined|date:"d/m/Y"}}</td>
+                                        <td class="center">{{ user.profile.team }}</td>
                                     </tr>
                                 {% endfor %}                             
                             </tbody>

@@ -17,6 +17,7 @@ from django.contrib.auth import views as auth_views
 
 from userena import views as userena_views
 from userena import settings as userena_settings
+from accounts.forms import *
 # import autocomplete_light.shortcuts as al
 
 
@@ -50,12 +51,13 @@ urlpatterns = patterns('',
     # url(r'^todo/', include('todo.urls')),
     
 
-    url(r'^(?P<username>[\.\w]+)/edit/$',userena_views.profile_edit, {'template_name': 'userena/profile_form.html'},name='userena_profile_edit'),
+    # url(r'^(?P<username>[\.\w]+)/edit/$',userena_views.profile_edit, {'template_name': 'userena/profile_form.html'},name='userena_profile_edit'),
     url(r'^(?P<username>[\@\.\w-]+)/password/$', userena_views.password_change, {'template_name': 'userena/profile_form.html'}, name="userena_password_change"),
     url(r'^(?P<username>[\@\.\w-]+)/email/$', userena_views.email_change, {'template_name': 'userena/profile_form.html'}, name='userena_email_change'),
+    url(r'^(?P<username>[\.\w-]+)/edit/$','userena.views.profile_edit',{'edit_profile_form': CustomEditProfileForm,'template_name': 'userena/profile_form.html'},name='userena_profile_edit'),
 
     url(r'^todo/', todolist, name='todo'),
-    url(r'^addtodo/$', addTodo, name='add'),
+    url(r'^addtodo/$', addTodo, name='addtodo'),
     url(r'^todofinish/(?P<id>\d+)/$', todofinish, name='finish'),
     url(r'^todobackout/(?P<id>\d+)/$', todoback,  name='backout'),
     url(r'^updatetodo/(?P<id>\d+)/$', updatetodo, name='update'),
