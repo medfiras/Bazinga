@@ -120,6 +120,7 @@
                                     <th>Last name</th>
                                     <th>Joined date</th>
                                     <th>Team</th>
+                                    <th>Mentor</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -130,6 +131,7 @@
                                         <td>{{ profile.user.last_name }}</td>
                                         <td class="center">{{profile.user.date_joined|date:"d/m/Y"}}</td>
                                         <td class="center">{{ user.profile.team }}</td>
+                                        <td class="center">{{ user.profile.team.mentor }}</td>
                                     </tr>
                                 {% endfor %}                             
                             </tbody>

@@ -56,6 +56,11 @@
                 <li class="{% if 'outbox' in request.path %}active{% endif %}"><a href="{% url 'messages_outbox' %}"><i class="fa fa-circle-o"></i> {% trans "Sent Messages" %}</a></li>
                 <li class="{% if 'trash' in request.path %}active{% endif %}"><a href="{% url 'messages_trash' %}"><i class="fa fa-circle-o"></i> {% trans "Trash" %}</a></li>
               </ul>
+            </li>
+            <li class="{% if 'todo' in request.path %}active{% endif %}">
+              <a href="{% url 'todo' %}">
+                <i class="fa fa-check-square-o"></i> <span>Todo List</span></i>
+              </a>              
             </li>             
           </ul>
         </section>

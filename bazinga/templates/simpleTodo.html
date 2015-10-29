@@ -122,6 +122,8 @@
                                 <tr>
                                     <th>ToDo Name</th>
                                     <th>Date</th>
+                                    <th>Priority</th>
+                                    <th>Status</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -141,6 +143,12 @@
                                             </a> {{ todo.todo }}
                                         </td>
                                         <td> <span class="pull-right">{{ todo.pubtime }}</span> </td>
+                                        <td>                                            
+                                            {% if todo.priority == '1' %}<span class="label label-danger">High</span>{% endif %}
+                                            {% if todo.priority == '2' %}<span class="label label-warning">Medium</span>{% endif %}
+                                            {% if todo.priority == '3' %}<span class="label label-success">Low</span>{% endif %}
+                                        </td>
+                                        <td> {% if todo.flag == '0' %} Completed {% else %} In Progress {% endif %}</td>
                                         <td class="te">
                                             <div class="col-lg-7 pull-right">
                                                 
@@ -154,6 +162,12 @@
                                     <tr class='success'>
                                         <td class="ftodo muted"><a href="{% url 'backout' ftodo.id %}" title="finish"><i class="fa fa-check-square-o checkbox-custom-checked"></i></a> {{ ftodo.todo }}</td>
                                         <td> <span class="pull-right">{{ ftodo.pubtime }}</span> </td>
+                                        <td>                                            
+                                            {% if ftodo.priority == '1' %}<span class="label label-danger">High</span>{% endif %}
+                                            {% if ftodo.priority == '2' %}<span class="label label-warning">Medium</span>{% endif %}
+                                            {% if ftodo.priority == '3' %}<span class="label label-success">Low</span>{% endif %}
+                                        </td>
+                                        <td> {% if ftodo.flag == '0' %} Completed {% else %} In Progress {% endif %}</td>
                                         <td class="te">
                                             <div class="col-lg-7 pull-right">
                                                 
