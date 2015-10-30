@@ -18,9 +18,20 @@ class Team(models.Model):
 	def __unicode__(self):
 		return self.name
 
+	def __str__(self):
+		return self.name
+
+	class Meta:
+		verbose_name = _('team')
+		verbose_name_plural = _('teams')
+
+	# Custom manager lets us do things like Item.completed_tasks.all()
+	objects = models.Manager()
+
 class MyProfile(UserenaBaseProfile):
 	user = models.OneToOneField(User,unique=True,verbose_name=_('user'),related_name='profile')
-	team = models.ForeignKey(Team,blank=True, null=True)
+	team = models.OneToOneField(Team,unique=True,verbose_name=_('team'),related_name='team')
+	# team = models.ForeignKey(Team,blank=True, null=True)
 	birth_date = models.DateField(blank=True, null=True)
 	address = models.TextField(blank=True, null=True)
 	#telephone = models.PhoneNumberField(blank=True)
@@ -34,6 +45,7 @@ class MyProfile(UserenaBaseProfile):
 	googleplus = models.CharField(max_length=100,validators=[URLValidator()],blank=True, null=True)
 	website = models.CharField(max_length=100,validators=[URLValidator()],blank=True, null=True)
 
+	objects = models.Manager()
 
 class TeamAdmin(admin.ModelAdmin):
     search_fields = ["name"]

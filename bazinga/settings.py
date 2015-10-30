@@ -145,7 +145,7 @@ INSTALLED_APPS = (
     'easy_thumbnails',
     'django_messages',
     'widget_tweaks',
-    # 'todo',
+    'todolist',
     # 'filer',
     # 'event_rsvp',
     # 'userena.contrib.umessages',

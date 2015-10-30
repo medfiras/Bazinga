@@ -48,7 +48,7 @@ urlpatterns = patterns('',
     # url(r'^messages/', include('userena.contrib.umessages.urls')),
     url(r'^messages/', include('django_messages.urls')),
     # url(r'^events/', include('event_rsvp.urls')),
-    # url(r'^todo/', include('todo.urls')),
+    url(r'^todolist/', include('todolist.urls')),
     
 
     # url(r'^(?P<username>[\.\w]+)/edit/$',userena_views.profile_edit, {'template_name': 'userena/profile_form.html'},name='userena_profile_edit'),
