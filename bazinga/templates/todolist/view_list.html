@@ -1,10 +1,13 @@
 {% extends "todolist/base.html" %}
 {% load url from future %}
-
+{% load i18n %}
+{% load staticfiles %}
 {% block title %}Todo List: {{ list.name }}{% endblock %}
 
 {% block content %}
-
+  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+  <link rel="stylesheet" href="/resources/demos/style.css">
     <script type="text/javascript">
     function order_tasks(data) {
         // The JQuery plugin tableDnD provides a serialize() function which provides the re-ordered
@@ -36,7 +39,7 @@
     {% else %}
         {% ifequal auth_ok 1 %}
            <h1>Tasks filed under "{{ list.name }}"</h1>
-           <p>This list belongs to group {{ list.group }}</p>
+           <p>This list belongs to group {{ list.team }}</p>
         {% endifequal %}
     {% endifequal %}
 
@@ -69,11 +72,20 @@
  	       </tr>
 	    
 
-        <tr><label for="id_priority">priority:</label><input type="text" name="priority" id="id_priority"></tr>
+        <tr>
+            <label for="id_priority">priority:</label>
+            <!-- <input type="text" name="priority" id="id_priority"> -->
+            <select name="priority" id="id_priority">
+                <option selected="selected" value="">---------</option>
+                <option value="1">High</option>
+                <option value="2">Medium</option>
+                <option value="3">Low</option>
+            </select>
+        </tr>
         </table>
-        <input type="hidden" name="created_by" value="{{ request.user.id }}" id="id_created_by">
-        <input type="hidden" name="list" value="{{ listid }}" id="id_list">
-        <input type="hidden" name="created_date" value="{{ created_date }}" id="id_created_date">
+        <input type="text" name="created_by" value="{{ request.user.id }}" id="id_created_by">
+        <input type="text" name="list" value="{{ listid }}" id="id_list">
+        <input type="text" name="created_date" value="{{ created_date }}" id="id_created_date">
 
 	    <p><input type="submit" name="add_task" value="Add task" class="todo-button"></p>
     </div>

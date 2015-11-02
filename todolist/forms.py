@@ -50,7 +50,7 @@ class EditItemForm(ModelForm):
     # must find other members of the groups the current list belongs to.
     def __init__(self, *args, **kwargs):
         super(EditItemForm, self).__init__(*args, **kwargs)
-        self.fields['assigned_to'].queryset = User.objects.filter(groups__in=[self.instance.list.group])
+        # self.fields['assigned_to'].queryset = User.objects.filter(groups__in=[self.instance.list.team])
 
     class Meta:
         model = Item

@@ -110,7 +110,7 @@ def view_list(request, list_id=0, list_slug=None, view_completed=0):
 		auth_ok = 1
 	else:
 		list = get_object_or_404(List, slug=list_slug)
-		#listid = list.id
+		listid = list.id
 
 		# Check whether current user is a member of the group this list belongs to.
 		if list.team in request.user.groups.all() or request.user.is_staff or list_slug == "mine":
@@ -185,10 +185,7 @@ def view_list(request, list_id=0, list_slug=None, view_completed=0):
 		    'assigned_to': request.user.id,
 		    'priority': 2,
 		})
-
-		print "++++++++++++++++++++++++++++"
-		print form
-		print "++++++++++++++++++++++++++++"
+		
 		if form.is_valid():
             # Save task first so we have a db object to play with
 			new_task = form.save()
@@ -196,16 +193,16 @@ def view_list(request, list_id=0, list_slug=None, view_completed=0):
             # Send email alert only if the Notify checkbox is checked AND the assignee is not the same as the submittor
             # Email subect and body format are handled by templates
 			if "notify" in request.POST:
-				if new_task.assigned_to != request.user:
+				# if new_task.assigned_to == request.user:
 
-                    # Send email
-					email_subject = render_to_string("todolist/email/assigned_subject.txt", {'task': new_task})
-					email_body = render_to_string("todolist/email/assigned_body.txt",
-					                              {'task': new_task, 'site': current_site, })
-					try:
-						send_mail(email_subject, email_body, new_task.created_by.email, [new_task.assigned_to.email],fail_silently=False)
-					except:
-						messages.error(request, "Task saved but mail not sent. Contact your administrator.")
+                # Send email
+				email_subject = render_to_string("todolist/email/assigned_subject.txt", {'task': new_task})
+				email_body = render_to_string("todolist/email/assigned_body.txt",
+				                              {'task': new_task, 'site': current_site, })
+				try:
+					send_mail(email_subject, email_body, new_task.created_by.email, [new_task.assigned_to.email],fail_silently=False)
+				except:
+					messages.error(request, "Task saved but mail not sent. Contact your administrator.")
 
 			messages.success(request, "New task \"%s\" has been added." % new_task.title)
 
@@ -236,7 +233,7 @@ def view_task(request, task_id):
     # Determine the group this task belongs to, and check whether current user is a member of that group.
     # Admins can edit all tasks.
 
-	if task.list.group in request.user.groups.all() or request.user.is_staff:
+	if task.list.team or request.user.is_staff:
 
 		auth_ok = 1
 		if request.POST:
@@ -280,8 +277,8 @@ def view_task(request, task_id):
 				messages.success(request, "The task has been edited.")
 
 				return HttpResponseRedirect(reverse('todo-incomplete_tasks', args=[task.list.id, task.list.slug]))
-		else:
-			form = EditItemForm(instance=task)
+		else:			
+			form = EditItemForm(instance=task)			
 			if task.due_date:
 				thedate = task.due_date
 			else:
@@ -363,7 +360,7 @@ def add_list(request):
 			try:
 				form.save()
 				messages.success(request, "A new list has been added.")
-				return HttpResponseRedirect(request.path)
+				return HttpResponseRedirect('/todolist')
 			except IntegrityError:
 				messages.error(request,
 					"There was a problem saving the new list. "

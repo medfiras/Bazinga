@@ -30,3 +30,7 @@
     padding: 5px;
     margin-bottom: 15px;
 }
+.col-centered{
+float: none;
+margin: 0 auto;
+}

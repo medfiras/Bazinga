@@ -1,0 +1,1 @@
+{{site_name}} : New task - {% autoescape off %}Note: {{ task.title }}{% endautoescape %}
