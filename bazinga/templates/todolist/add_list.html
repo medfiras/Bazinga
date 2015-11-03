@@ -1,26 +1,33 @@
 {% extends "todolist/base.html" %}
 {% block page_heading %}{% endblock %}
 {% block title %}Add Todo List{% endblock %}
-
+{% load widget_tweaks %}
 {% block content %}
 
-
-<form action="{% url 'todo-add_list' %}" method="post">
-		{% csrf_token %}
-<div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Add a list:</h4>
-      </div>
-	
-	
-		<div class="modal-body">
-			<table>{{ form }}</table>
+<form action="{% url 'todo-add_list' %}" method="post" class="form-horizontal">
+	{% csrf_token %}
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		<h4 class="modal-title">Add a list:</h4>
+    </div>
+	<div class="modal-body">
+		<div class="form-group">
+			<label class="col-sm-2 control-label">{{ form.name.label }}</label>
+			<div class="col-sm-10">
+				{% render_field form.name class+="form-control" %}
+			</div>
 		</div>
-	
+		<div class="form-group">
+			<label class="col-sm-2 control-label">{{ form.team.label }}</label>
+			<div class="col-sm-10">
+				{% render_field form.team class+="form-control" %}
+			</div>
+		</div>
+	</div>
 	<div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">Save changes</button>
-      </div>
+		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		<button type="submit" class="btn btn-primary">Save changes</button>
+	</div>
 </form>	
 
 {% endblock %}
