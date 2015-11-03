@@ -114,9 +114,14 @@ def edit_list(request, list_id):
 		if request.method == 'POST':
 			
 			form = EditListForm(request.POST, instance=list)
-			if form.is_valid():				
-				form.save()
-				return HttpResponseRedirect('/todolist')                
+			if form.is_valid():
+				try:
+					form.save()
+					return HttpResponseRedirect('/todolist')                
+				except IntegrityError:
+					messages.error(request,
+						"There was a problem saving the list. "
+						"Most likely a list with the same name in the same team already exists.")
 		else:			
 			form = EditListForm(instance=list)
 					
@@ -397,6 +402,7 @@ def add_list(request):
 				messages.error(request,
 					"There was a problem saving the new list. "
 					"Most likely a list with the same name in the same group already exists.")
+				return HttpResponseRedirect('/todolist')
 	else:
 		if request.user.profile.team:
 			form = AddListForm(request.user.profile.team.name, initial={"team": request.user.profile.team.name})

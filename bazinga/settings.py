@@ -127,11 +127,16 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
     'django.core.context_processors.request',
     'bazinga.context_processors.details',
+    'django.contrib.messages.context_processors.messages',
+    'django.core.context_processors.request',
 )
+
+BOOTSTRAP_ADMIN_SIDEBAR_MENU = True
 
 INSTALLED_APPS = (
     # 'autocomplete_light',
-    'django.contrib.auth',
+    'bazinga.apps.DjangoContribAuthConfig',
+    # 'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
@@ -150,10 +155,22 @@ INSTALLED_APPS = (
     # 'event_rsvp',
     # 'userena.contrib.umessages',
     # Uncomment the next line to enable the admin:
+    # 'django_admin_bootstrapped',
+    'bootstrap_admin_feincms',
+    'bootstrap_admin',
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',
+    'actstream',
 )
+
+ACTSTREAM_SETTINGS = {
+    # 'MANAGER': 'bazinga.managers.User',
+    'FETCH_RELATIONS': True,
+    'USE_PREFETCH': True,
+    'USE_JSONFIELD': False,
+    'GFK_FETCH_DEPTH': 1,
+}
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 

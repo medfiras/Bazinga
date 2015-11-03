@@ -43,7 +43,7 @@ class List(models.Model):
 		ordering = ["name"]
 		verbose_name_plural = "Lists"
 
-		# Prevents (at the database level) creation of two lists with the same name in the same taem
+		# Prevents (at the database level) creation of two lists with the same name in the same team
 		unique_together = ("team", "slug")
 
 

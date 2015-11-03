@@ -6,15 +6,19 @@ from accounts.models import *
 
 
 class AddListForm(ModelForm):
+
     # The picklist showing allowable groups to which a new list can be added
     # determines which groups the user belongs to. This queries the form object
     # to derive that list.
     def __init__(self, user, *args, **kwargs):
-        super(AddListForm, self).__init__(*args, **kwargs)
+        super(AddListForm, self).__init__(*args, **kwargs)        
         #self.fields['team'].queryset = Team.objects.filter(user=user.profile)
+        self.fields['team'].queryset = Team.objects.all()
+        self.fields['name'].required = True
+        print self.fields['name'].required
 
     class Meta:
-        model = List
+        model = List        
         exclude = []
 
 
@@ -37,9 +41,9 @@ class AddItemForm(ModelForm):
         super(AddItemForm, self).__init__(*args, **kwargs)
         # print dir(self.fields['list'])
         # print self.fields['list'].initial
-        # self.fields['assigned_to'].queryset = User.profile.objects.filter(teams__in=[task_list.team])
+        self.fields['assigned_to'].queryset = MyProfile.objects.filter(team_id=task_list.team.uuid)        
         self.fields['assigned_to'].label_from_instance = \
-            lambda obj: "%s (%s)" % (obj.get_full_name(), obj.username)
+            lambda obj: "%s (%s)" % (obj.user.first_name, obj.user.username)
 
     due_date = forms.DateField(
         required=False,
