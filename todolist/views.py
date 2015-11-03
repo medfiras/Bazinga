@@ -1,6 +1,6 @@
 from django.shortcuts import render_to_response
 from .models import Item, List, Comment
-from .forms import AddListForm, AddItemForm, EditItemForm, AddExternalItemForm, SearchForm
+from .forms import AddListForm, AddItemForm, EditItemForm, AddExternalItemForm, SearchForm, EditListForm
 from . import settings
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
@@ -96,6 +96,38 @@ def del_list(request, list_id, list_slug):
 		item_count_total = Item.objects.filter(list=list.id).count()
 
 	return render_to_response('todolist/del_list.html', locals(), context_instance=RequestContext(request))
+
+
+@user_passes_test(check_user_allowed)
+def edit_list(request, list_id):
+	"""
+	Edit an entire list. Danger Will Robinson! Only staff members should be allowed to access this view.
+	"""	
+	if request.user.is_staff:
+		can_edit = 1
+
+    # Get this list's object (to derive list.name, list.id, etc.)
+	list = get_object_or_404(List, pk=list_id)
+
+	if list.team or request.user.is_staff:
+		auth_ok = 1
+		if request.method == 'POST':
+			
+			form = EditListForm(request.POST, instance=list)
+			if form.is_valid():				
+				form.save()
+				return HttpResponseRedirect('/todolist')                
+		else:			
+			form = EditListForm(instance=list)
+					
+			# if task.due_date:
+			# 	thedate = task.due_date
+			# else:
+			# 	thedate = datetime.datetime.now()
+	else:
+		messages.info(request, "You do not have permission to view/edit this list.")
+
+	return render_to_response('todolist/edit_list.html', locals(), context_instance=RequestContext(request))
 
 
 @user_passes_test(check_user_allowed)

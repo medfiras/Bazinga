@@ -5,6 +5,7 @@ urlpatterns = patterns(
     url(r'^$', 'todolist.views.list_lists', name="todo-lists"),
     url(r'^mine/$', 'todolist.views.view_list', {'list_slug': 'mine'}, name="todo-mine"),
     url(r'^(?P<list_id>\d{1,4})/(?P<list_slug>[\w-]+)/delete$', 'todolist.views.del_list', name="todo-del_list"),
+    url(r'^(?P<list_id>\d{1,6})/edit$', 'todolist.views.edit_list', name="todo-edit_list"),
     url(r'^task/(?P<task_id>\d{1,6})$', 'todolist.views.view_task', name='todo-task_detail'),
     url(r'^(?P<list_id>\d{1,4})/(?P<list_slug>[\w-]+)$', 'todolist.views.view_list', name='todo-incomplete_tasks'),
     url(r'^(?P<list_id>\d{1,4})/(?P<list_slug>[\w-]+)/completed$', 'todolist.views.view_list', {'view_completed': 1},

@@ -46,14 +46,11 @@
           <div class="row">
           
 
-
- 
-  
-
     {% regroup list_list by team as section_list %}
-
+<div class="col-md-1">
+</div>
    
-    <div class="col-md-10 col-centered">
+    <div class="col-md-10">
              
 <div class="box box-primary">
                 <div class="box-header with-border">
@@ -83,7 +80,10 @@
                     <td><a href="{% url 'todo-incomplete_tasks' item.id item.slug %}">{{ item.name }}</a></td>
                     <td>{{ team.grouper }}</td>
                     <td>({{ item.incomplete_tasks.count }}/{{ item.item_set.count }})</td>
-                    <td><a href="{% url 'todo-del_list' item.id item.slug %}" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Delete</a></td>
+                    <td>
+                      <a href="{% url 'todo-del_list' item.id item.slug %}" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Delete</a>
+                      <a href="{% url 'todo-edit_list' item.id %}" type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#EditList"><i class="fa fa-edit"></i> Update</a>
+                    </td>
                 </tr>
             {% endfor %}  
             {% endfor %}                           
@@ -169,31 +169,42 @@
               </div>
             </div>
           </div>
+
+          <div class="modal fade" id="EditList" tabindex="-1" role="dialog" aria-labelledby="EditListLabel">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                
+              </div>
+            </div>
+          </div>
       <div class="control-sidebar-bg"></div>
     </div><!-- ./wrapper -->
 
 <script src="{% static "css/plugins/datatables/jquery.dataTables.min.js" %}"></script>
 
 <script src="{% static "css/plugins/datatables/dataTables.bootstrap.min.js" %}"></script>
-<script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+
 <!-- SlimScroll -->
 <script src="{% static "css/plugins/slimScroll/jquery.slimscroll.min.js" %}"></script>
 <!-- FastClick -->
 <script src="{% static "css/plugins/fastclick/fastclick.min.js" %}"></script>
-{% comment %}<script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
 
-<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>{% endcomment %}
+
+
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.0-rc2/js/bootstrap.min.js"></script>
+    
+    
+    
+    <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
    <script>
     $(function () {        
         $('#example2').DataTable({
             "paging": true,
-            "lengthChange": false,
+            "lengthChange": true,
             "searching": true,
             "ordering": true,
             "info": true,
-            "autoWidth": false
+            "autoWidth": true
         });
     });
 </script>

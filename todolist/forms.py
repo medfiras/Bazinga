@@ -18,6 +18,18 @@ class AddListForm(ModelForm):
         exclude = []
 
 
+class EditListForm(ModelForm):
+    # The picklist showing the users to which a new task can be assigned
+    # must find other members of the groups the current list belongs to.
+    def __init__(self, *args, **kwargs):
+        super(EditListForm, self).__init__(*args, **kwargs)
+        # self.fields['assigned_to'].queryset = User.objects.filter(groups__in=[self.instance.list.team])
+
+    class Meta:
+        model = List
+        exclude = []
+
+
 class AddItemForm(ModelForm):
     # The picklist showing the users to which a new task can be assigned
     # must find other members of the groups the current list belongs to.
