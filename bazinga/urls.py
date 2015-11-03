@@ -64,6 +64,8 @@ urlpatterns = patterns('',
     url(r'^tododelete/(?P<id>\d+)/$', tododelete, name='delete'),
 
     # url(r'^autocomplete/', include('autocomplete_light.urls')),
+
+    url(r'^activity/', include('actstream.urls')),    
     
 )
 
