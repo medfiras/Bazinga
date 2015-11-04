@@ -16,26 +16,32 @@
             <a href="{% url 'todo-lists' %}">Return to lists</a>
 
         {% else %}
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Delete entire list: {{ list.name }} ?</h4>
+            </div>
+            <div class="modal-body">
+                <p>Category tally:</p>
 
-            <h1>Delete entire list: {{ list.name }} ?</h1>
+                 <ul>
+                    <li>Incomplete: {{ item_count_undone }} </li>
+                    <li>Complete: {{ item_count_done }} </li>
+                    <li><strong>Total: {{ item_count_total }}</strong> </li>
+                 </ul>
 
-            <p>Category tally:</p>
+                <p class="text-red"> ... all of which will be irretrievably <strong>blown away</strong>. Are you sure you want to do that?</p>
 
-             <ul>
-                <li>Incomplete: {{ item_count_undone }} </li>
-                <li>Complete: {{ item_count_done }} </li>
-                <li><strong>Total: {{ item_count_total }}</strong> </li>
-             </ul>
+                <form action="{% url 'todo-del_list' list.id list_slug %}" method="post" accept-charset="utf-8">
+        		{% csrf_token %}
+                    <div class="modal-footer">
+                        <a href="{% url 'todo-incomplete_tasks' list.id list_slug %}" type="button" class="btn btn-default">Return to list: {{ list.name }}</a>  
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 
-            <p> ... all of which will be irretrievably <strong>blown away</strong>. Are you sure you want to do that?</p>
-
-            <form action="" method="post" accept-charset="utf-8">
-    		{% csrf_token %}
-
-                <input type="hidden" name="list" value="{{ list.id }}" id="some_name">
-             <p><input type="submit" name="delete-confirm" value="Do it! &rarr;" class="todo-button"> </p>
-            </form>
-
+                        <button type="submit" class="btn btn-primary" name="delete-confirm">Do it!</button>
+                    </div>
+                    <input type="hidden" name="list" value="{{ list.id }}" id="some_name">                 
+                </form>
+            </div>
 
             <a href="{% url 'todo-incomplete_tasks' list.id list_slug %}">Return to list: {{ list.name }}</a>
 

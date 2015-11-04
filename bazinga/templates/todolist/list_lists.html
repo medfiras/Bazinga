@@ -43,28 +43,26 @@
 
         <!-- Main content -->
         <section class="content">
-          <div class="row">
           
-      {% if messages %}
-        {% for message in messages %}
-          <div class="col-md-3"></div>
-          <div class="alert alert-{{ message.tags }} alert-dismissable col-md-6">
-            <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-            {{ message }}
-          </div>
-          <div class="col-md-3"></div>
-        {% endfor %}
-        <br/><br/>
-      {% endif %}
-
-    {% regroup list_list by team as section_list %}
-
-<div class="col-md-1">
-</div>
-   
-    <div class="col-md-10">
-             
-<div class="box box-primary">
+          
+            {% if messages %}
+              {% for message in messages %}
+                <div class="row">
+                  <div class="col-md-3"></div>
+                  <div class="alert alert-{{ message.tags }} alert-dismissable col-md-6">
+                    <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                    {{ message }}
+                  </div>
+                  <div class="col-md-3"></div>
+                </div>
+              {% endfor %}
+            {% endif %}
+          
+          <div class="row">
+            {% regroup list_list by team as section_list %}
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
+              <div class="box box-primary">
                 <div class="box-header with-border">
                   <h3 class="box-title">Todo Lists</h3>
                   <div class="box-tools pull-right">
@@ -74,41 +72,38 @@
                   </div>
                 </div>
                 <div class="box-body no-padding">
-                    <div class="box-body">
-                  <table class="table table-bordered table-striped table-hover" id="example2">
-
-        <thead>
-            <tr>
-                <th>List Name</th>
-                <th>Team</th>
-                <th>Number of tasks</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-          {% for team in section_list %}
-            {% for item in team.list %}
-                <tr class="odd gradeX">
-                    <td><a href="{% url 'todo-incomplete_tasks' item.id item.slug %}">{{ item.name }}</a></td>
-                    <td>{{ team.grouper }}</td>
-                    <td>({{ item.incomplete_tasks.count }}/{{ item.item_set.count }})</td>
-                    <td>
-                      <a href="{% url 'todo-del_list' item.id item.slug %}" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Delete</a>
-                      <a href="{% url 'todo-edit_list' item.id %}" type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#EditList"><i class="fa fa-edit"></i> Update</a>
-                    </td>
-                </tr>
-            {% endfor %}  
-            {% endfor %}                           
-        </tbody>
-    </table>
-  </div>
-</div>
-
-</div>
-    
-      </div>
-      <div class="col-md-1">
-</div>
+                  <div class="box-body">
+                    <table class="table table-bordered table-striped table-hover" id="example2">
+                      <thead>
+                        <tr>
+                          <th>List Name</th>
+                          <th>Team</th>
+                          <th>Number of tasks</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for team in section_list %}
+                          {% for item in team.list %}
+                            <tr class="odd gradeX">
+                                <td><a href="{% url 'todo-incomplete_tasks' item.id item.slug %}">{{ item.name }}</a></td>
+                                <td>{{ team.grouper }}</td>
+                                <td>({{ item.incomplete_tasks.count }}/{{ item.item_set.count }})</td>
+                                <td>
+                                  <a href="{% url 'todo-del_list' item.id item.slug %}" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#DelList"><i class="fa fa-trash"></i> Delete</a>
+                                  <a href="{% url 'todo-edit_list' item.id %}" type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#EditList"><i class="fa fa-edit"></i> Update</a>
+                                </td>
+                            </tr>
+                          {% endfor %}  
+                        {% endfor %}                           
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-1"></div>
+          </div>
         </section><!-- /.content -->
       </div><!-- /.content-wrapper -->
 
@@ -191,24 +186,28 @@
               </div>
             </div>
           </div>
+
+          <div class="modal fade" id="DelList" tabindex="-1" role="dialog" aria-labelledby="DelListLabel">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                
+              </div>
+            </div>
+          </div>
       <div class="control-sidebar-bg"></div>
     </div><!-- ./wrapper -->
 
-<script src="{% static "css/plugins/datatables/jquery.dataTables.min.js" %}"></script>
+  <!-- Slimscroll -->
+    <script src="{% static "css/plugins/slimScroll/jquery.slimscroll.min.js" %}"></script>
+    <!-- FastClick -->
+    <script src="{% static "css/plugins/fastclick/fastclick.min.js" %}"></script>
 
-<script src="{% static "css/plugins/datatables/dataTables.bootstrap.min.js" %}"></script>
-
-<!-- SlimScroll -->
-<script src="{% static "css/plugins/slimScroll/jquery.slimscroll.min.js" %}"></script>
-<!-- FastClick -->
-<script src="{% static "css/plugins/fastclick/fastclick.min.js" %}"></script>
-
-
-
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
     
-    
-    
+    <!-- Page Script -->
+    <script src="{% static "css/plugins/datatables/jquery.dataTables.min.js" %}"></script>
+  <script src="{% static "css/plugins/datatables/dataTables.bootstrap.min.js" %}"></script>
+  <script src="{% static "js/zabuto_calendar.js" %}"></script>
+  <!-- Bootstrap 3.3.5 -->
     <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
    <script>
     $(function () {        

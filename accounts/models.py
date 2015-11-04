@@ -45,7 +45,10 @@ class MyProfile(UserenaBaseProfile):
 	googleplus = models.CharField(max_length=100,validators=[URLValidator()],blank=True, null=True)
 	website = models.CharField(max_length=100,validators=[URLValidator()],blank=True, null=True)
 
-	objects = models.Manager()
+	def __unicode__(self):
+		return '%s' % (self.user)
+
+	# objects = models.Manager()
 
 class TeamAdmin(admin.ModelAdmin):
     search_fields = ["name"]

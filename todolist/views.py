@@ -90,6 +90,7 @@ def del_list(request, list_id, list_slug):
 
         # A var to send to the template so we can show the right thing
 		list_killed = 1
+		return HttpResponseRedirect('/todolist', messages.success(request,"List "+ del_list.name +" was deleted succefuly. "))				
 	else:
 		item_count_done = Item.objects.filter(list=list.id, completed=1).count()
 		item_count_undone = Item.objects.filter(list=list.id, completed=0).count()

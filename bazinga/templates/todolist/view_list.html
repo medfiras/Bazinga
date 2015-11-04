@@ -4,34 +4,162 @@
 {% load staticfiles %}
 {% block title %}Todo List: {{ list.name }}{% endblock %}
 
-{% block content %}
-  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-  <link rel="stylesheet" href="/resources/demos/style.css">
-    <script type="text/javascript">
-    function order_tasks(data) {
-        // The JQuery plugin tableDnD provides a serialize() function which provides the re-ordered
-        // data in a list. We pass that list as an object called "data" to a Django view
-        // to save the re-ordered data into the database.
-        $.post("{% url 'todo-reorder_tasks' %}", data, "json");
-        return false;
-    };
-    $(document).ready(function() {
-        // Initialise the task table for drag/drop re-ordering
-        $("#tasktable").tableDnD();
-        $('#tasktable').tableDnD({
-            onDrop: function(table, row) {
-                order_tasks($.tableDnD.serialize());
-            }
-        });
-        // Initially hide the Add Task form
-        $('#AddTask').hide();
-        // toggle slide to show the Add Task form when link clicked
-        $('#slideToggle').click(function(){
-            $(this).siblings('#AddTask').slideToggle();
-        });
-    });
-    </script>
+{% block content %}  
+<link href="{% static "css/custom.css" %}" rel="stylesheet">
+<link rel="stylesheet" href="{% static "css/plugins/datatables/dataTables.bootstrap.css" %}">
+
+<link rel="stylesheet" href="{% static "css/plugins/datepicker/datepicker3.css" %}">
+    
+    <div class="wrapper">
+
+      <!-- Main Header -->
+      {% include "header.html" %}
+      <!-- Left side column. contains the logo and sidebar -->
+      <aside class="main-sidebar">
+
+        <!-- sidebar: style can be found in sidebar.less -->
+        {% include "left_menu.html" %}
+        <!-- /.sidebar -->
+      </aside>
+
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+          <h1>
+            {{ list.name }} List     
+            <small>This list belongs to team <b>{{ list.team }}</b></small>
+          </h1>
+          <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Todo list</li>
+          </ol>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+
+          
+          <div class="row">
+            {% regroup list_list by team as section_list %}
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
+              <div class="box box-primary">
+                <div class="box-header with-border">
+                  <h3 class="box-title">Todo Lists</h3>
+                  <div class="box-tools pull-right">
+                    <div class="has-feedback">
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">
+                            <i class="fa fa-plus"></i> Add new task
+                        </button>
+                        {% ifequal auth_ok 1 %}
+                            {% ifequal view_completed 0  %}
+                                <a class="btn btn-success btn-sm" href="{% url 'todo-completed_tasks' list_id list_slug %}"><i class="fa fa-eye"></i> View completed tasks</a>
+                            {% endifequal %}
+
+                            {% ifequal view_completed 1 %}           
+                                <a  class="btn btn-primary btn-sm" href="{% url 'todo-incomplete_tasks' list_id list_slug %}"><i class="fa fa-eye"></i> View incomplete tasks</a>
+                            {% endifequal %}
+
+                            {% ifequal can_del 1 %}
+                                {% ifnotequal list_slug "mine" %}
+                                   <a class="btn btn-danger btn-sm" href="{% url 'todo-del_list' list_id list_slug %}"><i class="fa fa-trash"></i> Delete this list</a>
+                                {% endifnotequal %}
+                            {% endifequal %}
+                        {% endifequal %}
+                    </div>
+                  </div>
+                </div>
+                <div class="box-body no-padding">
+                  <div class="box-body">
+                    <form action="" method="POST">{% csrf_token %}
+                    {% ifequal view_completed 0  %}
+                        <table class="table table-bordered table-striped table-hover" id="incomplete_tasks">
+                          <thead>
+                            <tr>
+                                <th>Done</th>
+                                <th>Task</th>
+                                <th>Created</th>
+                                <th>Due on</th>
+                                <th>Owner</th>
+                                <th>Assigned</th>
+                                <th>Note</th>
+                                <th>Comm</th>
+
+                                {% ifequal list_slug "mine" %}
+                                <th>List</th>
+                                 {% endifequal %}
+
+                                <th>Del</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for task in task_list %}
+                                <tr id="{{ task.id }}">
+                                    <td><input type="checkbox" name="mark_done" value="{{ task.id }}" id="mark_done_{{ task.id }}">   </td>
+                                    <td><a href="{% url 'todo-task_detail' task.id %}">{{ task.title|truncatewords:20 }}</a></td>
+                                    <td>{{ task.created_date|date:"m/d/Y" }}</td>
+                                    <td>
+                                    {% if task.overdue_status %}<span class="overdue">{% endif %}
+                                        {{ task.due_date|date:"m/d/Y" }}
+                                    {% if task.overdue_status %}</span>{% endif %}
+                                    </td>
+                                    <td>{{ task.created_by }}</td>
+                                    <td>{{ task.assigned_to }}</td>
+                                    <td style="text-align:center;">{% if task.note %}&asymp;{% endif %} </td>
+                                    <td style="text-align:center;">{% ifnotequal task.comment_set.all.count 0  %}{{ task.comment_set.all.count }}{% endifnotequal %}
+
+                                    </td>
+                                    {% ifequal list_slug "mine" %}
+                                    <td><a href="{% url 'todo-incomplete_tasks' task.list.id task.list.slug %}">{{ task.list }}</a></td>
+                                    {% endifequal %}
+
+                                    <td><input type="checkbox" name="del_task" value="{{ task.id }}" id="del_task_{{ task.id }}">   </td>
+                                </tr>
+                            {% endfor %}                   
+                          </tbody>
+                        </table>
+                    {% endifequal %}
+
+                    {% ifequal view_completed 1 %}
+                        <table class="table table-bordered table-striped table-hover" id="complete_tasks">
+                            <tr>
+                                <th>Undo</th>
+                                <th>Task</th>
+                                <th>Created</th>
+                                <th>Completed on</th>
+                                <th>Note</th>
+                                <th>Comm</th>
+                                {% ifequal list_slug "mine" %}
+                                <th>List</th>
+                                 {% endifequal %}
+                                <th>Del</th>
+                            </tr>
+
+
+                            {% for task in completed_list %}
+                                <tr>
+                                    <td><input type="checkbox" name="undo_completed_task" value="{{ task.id }}" id="id_undo_completed_task{{ task.id }}">   </td>
+                                    <td><a href="{% url 'todo-task_detail' task.id %}">{{ task.title|truncatewords:20 }}</a></td>
+                                    <td>{{ task.created_date|date:"m/d/Y" }}</td>
+                                    <td>{{ task.completed_date|date:"m/d/Y" }}</td>
+                                    <td style="text-align:center;">{% if task.note %}&asymp;{% endif %} </td>
+                                    <td style="text-align:center;">{% ifnotequal task.comment_set.all.count 0  %}{{ task.comment_set.all.count }}{% endifnotequal %}
+
+                                    <td><input type="checkbox" name="del_completed_task" value="{{ task.id }}" id="del_completed_task_{{ task.id }}">   </td>
+                                </tr>
+                            {% endfor %}
+
+                        </table>
+                    {% endifequal %}
+                    <input type="submit" name="deldonetasks" value="Continue..."  class="todo-button">
+                </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-1"></div>
+          </div>
 
 
     {% ifequal list_slug "mine" %}
@@ -43,148 +171,201 @@
         {% endifequal %}
     {% endifequal %}
 
+    
+    
 
-    {% ifequal auth_ok 1 %}
-        <form action="" method="POST">
-        {% csrf_token %}
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">Add new task</h4>
+                </div>
+                <div class="modal-body">
+                    {% ifequal auth_ok 1 %}
+                        <form action="" method="POST" class="form-horizontal">
+                        {% csrf_token %}
 
-   {# Only show task adder if viewing a proper list #}
-   {% ifnotequal list_slug "mine" %}
-   <h2 style="margin-bottom:0px;" id="slideToggle" >&rarr; Click to add task &larr;</h2>
+                        {# Only show task adder if viewing a proper list #}
+                        {% ifnotequal list_slug "mine" %}                   
 
-   <div id="AddTask">
-	    <table class="nocolor" border="0" cellspacing="5" cellpadding="5">
-	       <tr>
-	           <td>{{ form.title.errors }}</td>
-	           <td>{{ form.due_date.errors }}</td>
-	       </tr>
-	       <tr>
-	           <td><label for="id_title">Task:</label> {{ form.title }}</td>
-	           <td><label for="id_due_date">Due date:</label> {{ form.due_date }}</td>
-	           <td><label for="id_assigned">Assign to:</label> {{ form.assigned_to }}</td>
-	           <td><label for="id_notify">Notify*:</label> <input type="checkbox" checked="checked" name="notify" value="1" id="notify"></td>
- 	       </tr>
-	       <tr>
-	           <td><label for="id_note">Note:</label>
-                    {{ form.note }}
-	               <p class="minor">*Email notifications will only be sent if task is assigned to someone besides yourself.</p>
-	           </td>
- 	       </tr>
-	    
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <label for="id_title" class="col-sm-2 control-label">Task:</label> 
+                                    <div class="col-sm-10"><input class="form-control" type="text" name="title"/></div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_priority" class="col-sm-2 control-label">priority:</label>
+                                    <!-- <input type="text" name="priority" id="id_priority"> -->
+                                    <div class="col-sm-10">
+                                        <select name="priority" id="id_priority" class="form-control">
+                                            <option selected="selected" value="">---------</option>
+                                            <option value="1">High</option>
+                                            <option value="2">Medium</option>
+                                            <option value="3">Low</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_due_date" class="col-sm-2 control-label">Due date:</label> 
+                                    <div class="col-sm-10"><input type="text" id="due_date" name="due_date" /></div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_assigned" class="col-sm-2 control-label">Assign to:</label> 
+                                    <div class="col-sm-10">{{ form.assigned_to }}</div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_notify" class="col-sm-2 control-label">Notify*:</label>
+                                    <div class="col-sm-10">
+                                        <input type="checkbox" checked="checked" name="notify" value="1" id="notify">
+                                        <p class="minor">*Email notifications will only be sent if task is assigned to someone besides yourself.</p>
+                                    </div>
+                                </div>                           
+                                <div class="form-group">
+                                    <label for="id_note" class="col-sm-2 control-label">Note:</label>
+                                    <div class="col-sm-10">{{ form.note }}</div>
+                                </div>    
+                                <input type="hidden" name="created_by" value="{{ request.user.id }}" id="id_created_by">
+                                <input type="hidden" name="list" value="{{ listid }}" id="id_list">
+                                <input type="hidden" name="created_date" value="{{ created_date }}" id="id_created_date">
 
-        <tr>
-            <label for="id_priority">priority:</label>
-            <!-- <input type="text" name="priority" id="id_priority"> -->
-            <select name="priority" id="id_priority">
-                <option selected="selected" value="">---------</option>
-                <option value="1">High</option>
-                <option value="2">Medium</option>
-                <option value="3">Low</option>
-            </select>
-        </tr>
-        </table>
-        <input type="text" name="created_by" value="{{ request.user.id }}" id="id_created_by">
-        <input type="text" name="list" value="{{ listid }}" id="id_list">
-        <input type="text" name="created_date" value="{{ created_date }}" id="id_created_date">
+                                
+                            </div>
 
-	    <p><input type="submit" name="add_task" value="Add task" class="todo-button"></p>
+                        {% endifnotequal %}
+
+
+                        
+
+                {% endifequal %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" name="add_task" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
     </div>
 
-        {% endifnotequal %}
 
+        </section><!-- /.content -->
+      </div><!-- /.content-wrapper -->
 
-    {% ifequal view_completed 0  %}
+      <!-- Main Footer -->
+      {% include "footer.html" %}
 
-	<h3>Incomplete tasks :: Drag rows to set priorities</h3>
+      <!-- Control Sidebar -->
+      <aside class="control-sidebar control-sidebar-dark">
+        <!-- Create the tabs -->
+        <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
+          <li class="active"><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
+          <li><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-gears"></i></a></li>
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content">
+          <!-- Home tab content -->
+          <div class="tab-pane active" id="control-sidebar-home-tab">
+            <h3 class="control-sidebar-heading">Recent Activity</h3>
+            <ul class="control-sidebar-menu">
+              <li>
+                <a href="javascript::;">
+                  <i class="menu-icon fa fa-birthday-cake bg-red"></i>
+                  <div class="menu-info">
+                    <h4 class="control-sidebar-subheading">Langdon's Birthday</h4>
+                    <p>Will be 23 on April 24th</p>
+                  </div>
+                </a>
+              </li>
+            </ul><!-- /.control-sidebar-menu -->
 
-	<table border="0" id="tasktable">
-        <tr>
-            <th>Done</th>
-            <th>Task</th>
-            <th>Created</th>
-            <th>Due on</th>
-            <th>Owner</th>
-            <th>Assigned</th>
-            <th>Note</th>
-            <th>Comm</th>
+            <h3 class="control-sidebar-heading">Tasks Progress</h3>
+            <ul class="control-sidebar-menu">
+              <li>
+                <a href="javascript::;">
+                  <h4 class="control-sidebar-subheading">
+                    Custom Template Design
+                    <span class="label label-danger pull-right">70%</span>
+                  </h4>
+                  <div class="progress progress-xxs">
+                    <div class="progress-bar progress-bar-danger" style="width: 70%"></div>
+                  </div>
+                </a>
+              </li>
+            </ul><!-- /.control-sidebar-menu -->
 
-            {% ifequal list_slug "mine" %}
-            <th>List</th>
-             {% endifequal %}
+          </div><!-- /.tab-pane -->
+          <!-- Stats tab content -->
+          <div class="tab-pane" id="control-sidebar-stats-tab">Stats Tab Content</div><!-- /.tab-pane -->
+          <!-- Settings tab content -->
+          <div class="tab-pane" id="control-sidebar-settings-tab">
+            <form method="post">
+              <h3 class="control-sidebar-heading">General Settings</h3>
+              <div class="form-group">
+                <label class="control-sidebar-subheading">
+                  Report panel usage
+                  <input type="checkbox" class="pull-right" checked>
+                </label>
+                <p>
+                  Some information about this general settings option
+                </p>
+              </div><!-- /.form-group -->
+            </form>
+          </div><!-- /.tab-pane -->
+        </div>
+      </aside><!-- /.control-sidebar -->
+      <!-- Add the sidebar's background. This div must be placed
+           immediately after the control sidebar -->
+      <div class="control-sidebar-bg"></div>
+    </div><!-- ./wrapper -->
 
-            <th>Del</th>
-        </tr>
-		{% for task in task_list %}
-	        <tr id="{{ task.id }}">
-	            <td><input type="checkbox" name="mark_done" value="{{ task.id }}" id="mark_done_{{ task.id }}">   </td>
-	            <td><a href="{% url 'todo-task_detail' task.id %}">{{ task.title|truncatewords:20 }}</a></td>
-	            <td>{{ task.created_date|date:"m/d/Y" }}</td>
-	            <td>
-	            {% if task.overdue_status %}<span class="overdue">{% endif %}
-	                {{ task.due_date|date:"m/d/Y" }}
-	            {% if task.overdue_status %}</span>{% endif %}
-	            </td>
-	            <td>{{ task.created_by }}</td>
-	            <td>{{ task.assigned_to }}</td>
-	            <td style="text-align:center;">{% if task.note %}&asymp;{% endif %} </td>
-	            <td style="text-align:center;">{% ifnotequal task.comment_set.all.count 0  %}{{ task.comment_set.all.count }}{% endifnotequal %}
+   <!-- Slimscroll -->
+    <script src="{% static "css/plugins/slimScroll/jquery.slimscroll.min.js" %}"></script>
+    <!-- FastClick -->
+    <script src="{% static "css/plugins/fastclick/fastclick.min.js" %}"></script>
 
-	            </td>
-	            {% ifequal list_slug "mine" %}
-                <td><a href="{% url 'todo-incomplete_tasks' task.list.id task.list.slug %}">{{ task.list }}</a></td>
-                {% endifequal %}
+    
+    <!-- Page Script -->
+    <script src="{% static "css/plugins/datatables/jquery.dataTables.min.js" %}"></script>
+  <script src="{% static "css/plugins/datatables/dataTables.bootstrap.min.js" %}"></script>
+  <script src="{% static "css/plugins/datepicker/bootstrap-datepicker.js" %}"></script>
+  <script src="{% static "js/zabuto_calendar.js" %}"></script>
+  <!-- Bootstrap 3.3.5 -->
+    <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
 
-	            <td><input type="checkbox" name="del_task" value="{{ task.id }}" id="del_task_{{ task.id }}">   </td>
-            </tr>
-	    {% endfor %}
-	</table>
-    <p><input type="submit" name="mark_tasks_done" value="Continue..."  class="todo-button"></p>
+    <script>
+        $('#due_date').datepicker({
+            startDate: '0d',
+            autoclose: true,
+            clearBtn: true,
+            format: 'mm/dd/yyyy',
+        });
+      
+    </script>
 
-    <p><a  class="todo" href="{% url 'todo-completed_tasks' list_id list_slug %}">View completed tasks</a></p>
-    {% endifequal %}
-
-    {% ifequal view_completed 1 %}
-	<h3>Completed tasks</h3>
-
-	<table border="0"  id="tasktable">
-        <tr>
-            <th>Undo</th>
-            <th>Task</th>
-            <th>Created</th>
-            <th>Completed on</th>
-            <th>Note</th>
-            <th>Comm</th>
-            {% ifequal list_slug "mine" %}
-            <th>List</th>
-             {% endifequal %}
-            <th>Del</th>
-        </tr>
-
-
-		{% for task in completed_list %}
-	        <tr>
-	            <td><input type="checkbox" name="undo_completed_task" value="{{ task.id }}" id="id_undo_completed_task{{ task.id }}">   </td>
-	            <td><a href="{% url 'todo-task_detail' task.id %}">{{ task.title|truncatewords:20 }}</a></td>
-	            <td>{{ task.created_date|date:"m/d/Y" }}</td>
-	            <td>{{ task.completed_date|date:"m/d/Y" }}</td>
-	            <td style="text-align:center;">{% if task.note %}&asymp;{% endif %} </td>
-	            <td style="text-align:center;">{% ifnotequal task.comment_set.all.count 0  %}{{ task.comment_set.all.count }}{% endifnotequal %}
-
-	            <td><input type="checkbox" name="del_completed_task" value="{{ task.id }}" id="del_completed_task_{{ task.id }}">   </td>
-            </tr>
-	    {% endfor %}
-
-	</table>
-	<p><input type="submit" name="deldonetasks" value="Continue..."  class="todo-button"></p>
-	</form>
-    <p><a  class="todo" href="{% url 'todo-incomplete_tasks' list_id list_slug %}">View incomplete tasks</a></p>
-    {% endifequal %}
-
-	{% ifequal can_del 1 %}
-	{% ifnotequal list_slug "mine" %}
-	   <p><a class="todo" href="{% url 'todo-del_list' list_id list_slug %}">Delete this list</a></p>
-	{% endifnotequal %}
-	{% endifequal %}
-
-    {% endifequal %}
+   <script>
+    $(function () {        
+        $('#incomplete_tasks').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": true
+        });
+    });
+    </script>
+    <script>
+     $(function () {        
+        $('#complete_tasks').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": true
+        });
+    });
+</script>
 {% endblock %}

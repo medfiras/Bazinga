@@ -41,9 +41,15 @@ class AddItemForm(ModelForm):
         super(AddItemForm, self).__init__(*args, **kwargs)
         # print dir(self.fields['list'])
         # print self.fields['list'].initial
-        self.fields['assigned_to'].queryset = MyProfile.objects.filter(team_id=task_list.team.uuid)        
+
+        # self.fields['assigned_to'].queryset = User.objects.filter(groups__in=[task_list.group])
+        # self.fields['assigned_to'].label_from_instance = \
+        #     lambda obj: "%s (%s)" % (obj.get_full_name(), obj.username)
+
+        self.fields['assigned_to'].queryset = User.objects.filter(username=MyProfile.objects.filter(team_id=task_list.team.uuid)[0])
+        print MyProfile.objects.filter(team_id=task_list.team.uuid)[0]
         self.fields['assigned_to'].label_from_instance = \
-            lambda obj: "%s (%s)" % (obj.user.first_name, obj.user.username)
+            lambda obj: "%s (%s)" % (obj.get_full_name(), obj.username)
 
     due_date = forms.DateField(
         required=False,
