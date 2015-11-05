@@ -2,10 +2,11 @@
 {% load url from future %}
 {% load i18n %}
 {% load staticfiles %}
+{% load widget_tweaks %}
 {% block title %}Todo List: {{ list.name }}{% endblock %}
 
 {% block content %}  
-<link href="{% static "css/custom.css" %}" rel="stylesheet">
+
 <link rel="stylesheet" href="{% static "css/plugins/datatables/dataTables.bootstrap.css" %}">
 
 <link rel="stylesheet" href="{% static "css/plugins/datepicker/datepicker3.css" %}">
@@ -26,10 +27,18 @@
       <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
-          <h1>
-            {{ list.name }} List     
-            <small>This list belongs to team <b>{{ list.team }}</b></small>
-          </h1>
+            {% ifequal list_slug "mine" %}
+                <h1>Tasks assigned to you <small>{{ request.user }}</small></h1>
+            {% else %}
+                {% ifequal auth_ok 1 %}
+                   <h1>
+                    Tasks filed under "{{ list.name }}" List     
+                    <small>This list belongs to team <b>{{ list.team }}</b></small>
+                  </h1>
+                {% endifequal %}
+            {% endifequal %}
+
+          
           <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
             <li class="active">Todo list</li>
@@ -39,8 +48,20 @@
         <!-- Main content -->
         <section class="content">
 
+            {% if messages %}
+              {% for message in messages %}
+                <div class="row">
+                  <div class="col-md-3"></div>
+                  <div class="alert alert-{{ message.tags }} alert-dismissable col-md-6">
+                    <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                    {{ message }}
+                  </div>
+                  <div class="col-md-3"></div>
+                </div>
+              {% endfor %}
+            {% endif %}
           
-          <div class="row">
+        <div class="row">
             {% regroup list_list by team as section_list %}
             <div class="col-md-1"></div>
             <div class="col-md-10">
@@ -63,7 +84,7 @@
 
                             {% ifequal can_del 1 %}
                                 {% ifnotequal list_slug "mine" %}
-                                   <a class="btn btn-danger btn-sm" href="{% url 'todo-del_list' list_id list_slug %}"><i class="fa fa-trash"></i> Delete this list</a>
+                                   <a href="{% url 'todo-del_list' list_id list_slug %}" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#DelList"><i class="fa fa-trash"></i> Delete this list</a>
                                 {% endifnotequal %}
                             {% endifequal %}
                         {% endifequal %}
@@ -152,7 +173,7 @@
 
                         </table>
                     {% endifequal %}
-                    <input type="submit" name="deldonetasks" value="Continue..."  class="todo-button">
+                    <input type="submit" name="deldonetasks" value="Done/Delete"  class="btn btn-warning">
                 </form>
                   </div>
                 </div>
@@ -160,19 +181,6 @@
             </div>
             <div class="col-md-1"></div>
           </div>
-
-
-    {% ifequal list_slug "mine" %}
-        <h1>Tasks assigned to {{ request.user }}</h1>
-    {% else %}
-        {% ifequal auth_ok 1 %}
-           <h1>Tasks filed under "{{ list.name }}"</h1>
-           <p>This list belongs to group {{ list.team }}</p>
-        {% endifequal %}
-    {% endifequal %}
-
-    
-    
 
     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
         <div class="modal-dialog" role="document">
@@ -210,11 +218,11 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="id_due_date" class="col-sm-2 control-label">Due date:</label> 
-                                    <div class="col-sm-10"><input type="text" id="due_date" name="due_date" /></div>
+                                    <div class="col-sm-10"><input class="form-control datePicker" type="text" id="due_date" name="due_date" /></div>
                                 </div>
                                 <div class="form-group">
                                     <label for="id_assigned" class="col-sm-2 control-label">Assign to:</label> 
-                                    <div class="col-sm-10">{{ form.assigned_to }}</div>
+                                    <div class="col-sm-10">{% render_field form.assigned_to class+="form-control" %}</div>
                                 </div>
                                 <div class="form-group">
                                     <label for="id_notify" class="col-sm-2 control-label">Notify*:</label>
@@ -225,19 +233,16 @@
                                 </div>                           
                                 <div class="form-group">
                                     <label for="id_note" class="col-sm-2 control-label">Note:</label>
-                                    <div class="col-sm-10">{{ form.note }}</div>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control" name="note" id="id_note"></textarea>
+                                    </div>
                                 </div>    
                                 <input type="hidden" name="created_by" value="{{ request.user.id }}" id="id_created_by">
                                 <input type="hidden" name="list" value="{{ listid }}" id="id_list">
                                 <input type="hidden" name="created_date" value="{{ created_date }}" id="id_created_date">
-
-                                
                             </div>
 
-                        {% endifnotequal %}
-
-
-                        
+                        {% endifnotequal %}                        
 
                 {% endifequal %}
                 </div>
@@ -249,7 +254,13 @@
         </div>
     </div>
 
-
+        <div class="modal fade" id="DelList" tabindex="-1" role="dialog" aria-labelledby="DelListLabel">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                
+              </div>
+            </div>
+          </div>
         </section><!-- /.content -->
       </div><!-- /.content-wrapper -->
 
