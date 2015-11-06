@@ -70,9 +70,11 @@
                   <h3 class="box-title">Todo Lists</h3>
                   <div class="box-tools pull-right">
                     <div class="has-feedback">
-                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">
-                            <i class="fa fa-plus"></i> Add new task
-                        </button>
+                        {% ifnotequal list_slug "mine" %}
+                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">
+                                <i class="fa fa-plus"></i> Add new task
+                            </button>
+                        {% endifnotequal %}
                         {% ifequal auth_ok 1 %}
                             {% ifequal view_completed 0  %}
                                 <a class="btn btn-success btn-sm" href="{% url 'todo-completed_tasks' list_id list_slug %}"><i class="fa fa-eye"></i> View completed tasks</a>
@@ -105,13 +107,13 @@
                                 <th>Owner</th>
                                 <th>Assigned</th>
                                 <th>Note</th>
-                                <th>Comm</th>
+                                <th>Comment</th>
 
                                 {% ifequal list_slug "mine" %}
                                 <th>List</th>
                                  {% endifequal %}
 
-                                <th>Del</th>
+                                <th>Delete</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -150,11 +152,11 @@
                                 <th>Created</th>
                                 <th>Completed on</th>
                                 <th>Note</th>
-                                <th>Comm</th>
+                                <th>Comment</th>
                                 {% ifequal list_slug "mine" %}
                                 <th>List</th>
                                  {% endifequal %}
-                                <th>Del</th>
+                                <th>Delete</th>
                             </tr>
 
 
