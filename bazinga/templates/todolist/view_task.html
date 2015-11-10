@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
 {% load url from future %}
 {% load staticfiles %}
-
-{% block content %}  
+{% load i18n %}
+{% block content %} 
+<link href="{% static "css/custom.css" %}" rel="stylesheet">
 <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
     
     <div class="wrapper">
@@ -59,33 +60,70 @@
                         <div class="task_note"><strong>Note:</strong> {{ task.note|safe|urlize|linebreaks }}</div>
                         {% endif %}
 
-                        <h3>Comments on this task</h3>
-
-                        <div class="task_comments">
-
-                            <div class="direct-chat-messages">
-                        <!-- Message. Default to the left -->
-                        {% for comment in comment_list %}
-                            <div class="direct-chat-msg">
-                              <div class="direct-chat-info clearfix">
-                                <span class="direct-chat-name pull-left">{{ comment.author.first_name }} {{ comment.author.last_name }} ({{ comment.author.username }})</span>
-                                <span class="direct-chat-timestamp pull-right">{{ comment.date|date:"F d Y P" }}</span>
-                              </div><!-- /.direct-chat-info -->
-                              <img class="direct-chat-img" src="{{ comment.author.profile.get_mugshot_url }}" alt="message user image"><!-- /.direct-chat-img -->
-                              <div class="direct-chat-text">
-                               {{ comment.body|safe|urlize|linebreaks }}
-                              </div><!-- /.direct-chat-text -->
-                            </div><!-- /.direct-chat-msg -->
-                        {% empty %}
-                            <p>No Comments</p>
-                        {% endfor %}
-                   
-                      </div><!--/.direct-chat-messages-->
-
-
                         
-                        </div>
+                        <div class="box box-warning direct-chat direct-chat-primary">
+                          <div class="box-header with-border">
+                            <h3 class="box-title">Comments on this task</h3>
+                            <div class="box-tools pull-right">
+                              <span data-toggle="tooltip" title="3 New Messages" class="badge bg-yellow">{{ task.comment_set.all.count }}</span>
+                              <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                              <!-- <button class="btn btn-box-tool" data-toggle="tooltip" title="Contacts" data-widget="chat-pane-toggle"><i class="fa fa-comments"></i></button>
+                              <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button> -->
+                            </div>
+                          </div><!-- /.box-header -->
+                          <div class="box-body">
+                            <!-- Conversations are loaded here -->
+                            <div class="direct-chat-messages">
 
+                                  
+                              <!-- Message. Default to the left -->
+                              {% for comment in comments %}
+                                  <div class="direct-chat-warning {% if request.user.username == comment.author.username %} right {% else %} left {% endif %}">
+                                    <div class="direct-chat-info clearfix">
+                                      <span class="direct-chat-name pull-left">{{ comment.author.first_name }} {{ comment.author.last_name }} (<a href="{% url 'userena_profile_detail' comment.author.username %}">{{ comment.author.username }}</a>)</span>
+                                      <span class="direct-chat-timestamp pull-right">{{ comment.date|date:"d M Y - P" }}</span>
+                                    </div><!-- /.direct-chat-info -->
+                                    <a href="{% url 'userena_profile_detail' comment.author.username %}"><img class="direct-chat-img" src="{{ comment.author.profile.get_mugshot_url }}" alt="message user image"></a><!-- /.direct-chat-img -->
+                                    <div class="direct-chat-text">
+                                     {{ comment.body|safe|urlize|linebreaks }}
+                                    </div><!-- /.direct-chat-text -->
+                                  </div><!-- /.direct-chat-msg -->
+                              {% empty %}
+                                  <p>No Comments</p>
+                              {% endfor %}
+                         
+                            </div><!--/.direct-chat-messages-->
+
+                     
+                            <ul class="pagination">
+                              
+                              
+                              {% if comments.has_previous %}
+                                  <li><a href="?page={{ comments.previous_page_number }}">&laquo; {% trans 'Previous' %}</a></li>
+                                  {% else %}
+                                  <li class="disabled"><a href="">&laquo; {% trans 'Previous' %}</a></li>
+                              {% endif %}
+
+                              {% for num in comments.paginator.page_range %}
+                                {% ifequal num comments.number %}
+                                  <li class="active"><a href="">{{ num }}</a></li>
+                                {% else %}
+                                  <li><a href="?page={{ num }}"> {{ num }}</a></li>
+                                {% endifequal %} 
+                              {% endfor %}
+
+                                
+                              {% if comments.has_next %}
+                                <li><a href="?page={{ comments.next_page_number }}">{% trans 'Next' %} &raquo;</a></li>
+                              {% else %}
+                                  <li class="disabled"><a href="">{% trans 'Next' %} &raquo;</a></li>  
+                              {% endif %}
+                               
+                            </ul>
+                   
+                     
+                        </div>
+                      </div>
                         <h3>Add comment</h3>
 
                         <textarea name="comment-body"></textarea>

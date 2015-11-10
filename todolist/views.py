@@ -16,6 +16,7 @@ from django.db.models import Q
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 import datetime
@@ -52,7 +53,7 @@ def list_lists(request):
 	if request.user.is_superuser:
 		list_list = List.objects.all().order_by('team', 'name')
 	else:
-		list_list = List.objects.filter(group__in=request.user.groups.all).order_by('group', 'name')
+		list_list = List.objects.filter(team_id=request.user.profile.team.uuid).order_by('team', 'name')
 
     # Count everything
 	list_count = list_list.count()
@@ -61,7 +62,8 @@ def list_lists(request):
 	if request.user.is_superuser:
 		item_count = Item.objects.filter(completed=0).count()
 	else:
-		item_count = Item.objects.filter(completed=0).filter(list__group__in=request.user.groups.all()).count()
+		# item_count = Item.objects.filter(completed=0).filter(list__group__in=request.user.groups.all()).count()
+		item_count = Item.objects.filter(completed=0).count()
 
 	return render_to_response('todolist/list_lists.html', locals(), context_instance=RequestContext(request))
 
@@ -110,7 +112,7 @@ def edit_list(request, list_id):
     # Get this list's object (to derive list.name, list.id, etc.)
 	list = get_object_or_404(List, pk=list_id)
 
-	if list.team or request.user.is_staff:
+	if list.team.uuid == request.user.profile.team.uuid or request.user.is_staff:
 		auth_ok = 1
 		if request.method == 'POST':
 			
@@ -130,7 +132,7 @@ def edit_list(request, list_id):
 			# 	thedate = task.due_date
 			# else:
 			# 	thedate = datetime.datetime.now()
-	else:
+	else:		
 		messages.info(request, "You do not have permission to view/edit this list.")
 
 	return render_to_response('todolist/edit_list.html', locals(), context_instance=RequestContext(request))
@@ -151,9 +153,9 @@ def view_list(request, list_id=0, list_slug=None, view_completed=0):
 		listid = list.id
 
 		# Check whether current user is a member of the group this list belongs to.
-		if list.team in request.user.groups.all() or request.user.is_staff or list_slug == "mine":
+		if list.team.uuid == request.user.profile.team.uuid or request.user.is_staff or list_slug == "mine":
 			auth_ok = 1  # User is authorized for this view
-		else:  # User does not belong to the group this list is attached to
+		else:  # User does not belong to the group this list is attached to			
 			messages.error(request, "You do not have permission to view/edit this list.")
 
             # First check for items in the mark_done POST array. If present, change
@@ -323,6 +325,23 @@ def view_task(request, task_id):
 				thedate = datetime.datetime.now()
 	else:
 		messages.info(request, "You do not have permission to view/edit this task.")
+
+
+
+	paginator = Paginator(comment_list, 10) # Show 25 comments per page
+	# paginator.orphans = int(5)
+	paginator.range = range(5)
+
+	page = request.GET.get('page')
+	try:
+		comments = paginator.page(page)
+	except PageNotAnInteger:
+		# If page is not an integer, deliver first page.
+		comments = paginator.page(1)
+	except EmptyPage:
+    	# If page is out of range (e.g. 9999), deliver last page of results.
+		comments = paginator.page(paginator.num_pages)
+
 
 	return render_to_response('todolist/view_task.html', locals(), context_instance=RequestContext(request))
 

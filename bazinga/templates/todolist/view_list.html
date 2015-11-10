@@ -146,6 +146,7 @@
 
                     {% ifequal view_completed 1 %}
                         <table class="table table-bordered table-striped table-hover" id="complete_tasks">
+                           <thead>
                             <tr>
                                 <th>Undo</th>
                                 <th>Task</th>
@@ -158,8 +159,8 @@
                                  {% endifequal %}
                                 <th>Delete</th>
                             </tr>
-
-
+                          </thead>
+                          <tbody>
                             {% for task in completed_list %}
                                 <tr>
                                     <td><input type="checkbox" name="undo_completed_task" value="{{ task.id }}" id="id_undo_completed_task{{ task.id }}">   </td>
@@ -172,7 +173,7 @@
                                     <td><input type="checkbox" name="del_completed_task" value="{{ task.id }}" id="del_completed_task_{{ task.id }}">   </td>
                                 </tr>
                             {% endfor %}
-
+                          </tbody>
                         </table>
                     {% endifequal %}
                     <input type="submit" name="deldonetasks" value="Done/Delete"  class="btn btn-warning">

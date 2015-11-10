@@ -97,3 +97,7 @@ table.nocolor, table.nocolor tr, table.nocolor td {
     width: 70%;
     overflow: visible;
 }
+
+.direct-chat-messages{
+    height: auto !important;
+}

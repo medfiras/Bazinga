@@ -106,6 +106,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'pagination_bootstrap.middleware.PaginationMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
@@ -127,8 +128,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
     'django.core.context_processors.request',
     'bazinga.context_processors.details',
-    'django.contrib.messages.context_processors.messages',
-    'django.core.context_processors.request',
+    'django.contrib.messages.context_processors.messages',    
 )
 
 BOOTSTRAP_ADMIN_SIDEBAR_MENU = True
@@ -162,6 +162,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',
     'actstream',
+    'pagination_bootstrap',
 )
 
 ACTSTREAM_SETTINGS = {

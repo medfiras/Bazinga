@@ -30,8 +30,8 @@ class Team(models.Model):
 
 class MyProfile(UserenaBaseProfile):
 	user = models.OneToOneField(User,unique=True,verbose_name=_('user'),related_name='profile')
-	team = models.OneToOneField(Team,unique=True,verbose_name=_('team'),related_name='team')
-	# team = models.ForeignKey(Team,blank=True, null=True)
+	# team = models.OneToOneField(Team,unique=True,verbose_name=_('team'),related_name='team')
+	team = models.ForeignKey(Team,blank=True, null=True)
 	birth_date = models.DateField(blank=True, null=True)
 	address = models.TextField(blank=True, null=True)
 	#telephone = models.PhoneNumberField(blank=True)

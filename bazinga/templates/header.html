@@ -76,11 +76,16 @@
                   <li>
                     <!-- Inner Menu: contains the notifications -->
                     <ul class="menu">
-                      <li><!-- start notification -->
-                        <a href="#">
-                          <i class="fa fa-users text-aqua"></i> 5 new members joined today
-                        </a>
-                      </li><!-- end notification -->
+                      {% if messages %}
+                        {% for message in messages %}
+                          <li><!-- start notification -->
+                            <a href="#">
+                              <i class="fa fa-users text-aqua"></i> {{ message }}
+                            </a>
+                          </li><!-- end notification -->
+                          
+                        {% endfor %}
+                      {% endif %}                      
                     </ul>
                   </li>
                   <li class="footer"><a href="#">View all</a></li>
