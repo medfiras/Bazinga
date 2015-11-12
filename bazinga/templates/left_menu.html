@@ -57,8 +57,8 @@
                 <li class="{% if 'trash' in request.path %}active{% endif %}"><a href="{% url 'messages_trash' %}"><i class="fa fa-circle-o"></i> {% trans "Trash" %}</a></li>
               </ul>
             </li>
-            <li class="{% if 'todo' in request.path %}active{% endif %}">
-              <a href="{% url 'todo' %}">
+            <li class="{% if 'todolist' in request.path %}active{% endif %}">
+              <a href="{% url 'todo-lists' %}">
                 <i class="fa fa-check-square-o"></i> <span>Todo List</span></i>
               </a>              
             </li>             
