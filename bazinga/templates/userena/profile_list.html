@@ -62,7 +62,7 @@
                             </div>
                             <div class="box-footer">
                                 <div class="row">
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-4 border-right">
                                         <div class="description-block">
                                             <h5 class="description-header">Team</h5>
                                             <span class="description-text">{{ profile.team }}</span>
@@ -74,7 +74,7 @@
                                             <span class="description-text">{{profile.user.date_joined|date:"d/m/Y"}}</span>
                                         </div><!-- /.description-block -->
                                     </div><!-- /.col -->
-                                    <div class="col-sm-4 border-right">
+                                    <div class="col-sm-4">
                                         <div class="description-block">
                                             <h5 class="description-header">Last Login</h5>
                                             <span class="description-text">{{profile.user.last_login|date:"d/m/Y"}}</span>
@@ -225,7 +225,7 @@
     $(function () {        
         $('#example2').DataTable({
             "paging": true,
-            "lengthChange": false,
+            "lengthChange": true,
             "searching": true,
             "ordering": true,
             "info": true,

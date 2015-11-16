@@ -8,10 +8,10 @@
           <!-- Sidebar user panel -->
           <div class="user-panel">
             <div class="pull-left image">
-              <img src="{{ user.profile.get_mugshot_url }}" class="img-circle" alt="User Image">
+              <img src="{% if user.is_authenticated %}{{ user.profile.get_mugshot_url }}{% else %}{% static "images/photo.png" %}{% endif %}" class="img-circle" alt="User Image">
             </div>
             <div class="pull-left info">
-              <p>{{ user.username }}</p>
+              <p>{% if user.is_authenticated %}{{ user.username }}{% else %}Guest{% endif %}</p>
               <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
             </div>
           </div>

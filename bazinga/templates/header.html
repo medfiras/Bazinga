@@ -40,7 +40,7 @@
                             <a href="#">
                               <div class="pull-left">
                                 <!-- User Image -->
-                                <img src="{{ message.sender.profile.get_mugshot_url }} " class="img-circle" alt="USer Image">
+                                <img src="{% if user.is_authenticated %}{{ message.sender.profile.get_mugshot_url }}{% else %}{% static "images/photo.png" %}{% endif %}" class="img-circle" alt="USer Image">
                               </div>
                               <!-- Message title and timestamp -->
                               <h4>
@@ -131,17 +131,20 @@
                 <!-- Menu Toggle Button -->
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <!-- The user image in the navbar-->
-                  <img src="{{ user.profile.get_mugshot_url }}" class="user-image" alt="User Image">
+                  <img src="{% if user.is_authenticated %}{{ user.profile.get_mugshot_url }}{% else %}{% static "images/photo.png" %}{% endif %}" class="user-image" alt="User Image">
                   <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                  <span class="hidden-xs">{{ user.username }}</span>
+                  <span class="hidden-xs">{% if user.is_authenticated %}{{ user.username }}{% else %}Guest{% endif %}</span>
                 </a>
                 <ul class="dropdown-menu">
                   <!-- The user image in the menu -->
                   <li class="user-header">
-                    <img src="{{ user.profile.get_mugshot_url }}" class="img-circle" alt="User Image">
+                    <img src="{% if user.is_authenticated %}{{ user.profile.get_mugshot_url }}{% else %}{% static "images/photo.png" %}{% endif %}" class="img-circle" alt="User Image">
                     <p>
-                      {{ user.get_full_name }} - {{ user.profile.group }}
+                      {% if user.is_authenticated %}{{ user.get_full_name }} - {{ user.profile.group }}
                       <small>Member since {{ user.date_joined|date:"M. Y" }}</small>
+                      {% else %}Guest
+                      <small>Please login or create a new account</small>
+                      {% endif %}
                     </p>
                   </li>
                   <!-- Menu Body -->

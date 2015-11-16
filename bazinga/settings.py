@@ -156,7 +156,7 @@ INSTALLED_APPS = (
     # 'userena.contrib.umessages',
     # Uncomment the next line to enable the admin:
     # 'django_admin_bootstrapped',
-    'bootstrap_admin_feincms',
+    #'bootstrap_admin_feincms',
     'bootstrap_admin',
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
@@ -248,7 +248,7 @@ ANONYMOUS_USER_ID = -1
 # Test runner
 TEST_RUNNER = 'django_coverage.coverage_runner.CoverageRunner'
 
-SITE_NAME_SHORT = 'BZ'
+SITE_NAME_SHORT = 'BZG'
 SITE_NAME='Bazinga'
 SITE_URL='http://www.your-site-url.com'
 SITE_VERSION='1.0'

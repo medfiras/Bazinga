@@ -99,9 +99,9 @@
                               
                               
                               {% if comments.has_previous %}
-                                  <li><a href="?page={{ comments.previous_page_number }}">&laquo; {% trans 'Previous' %}</a></li>
+                                  <li><a href="?page={{ comments.previous_page_number }}">&laquo; </a></li>
                                   {% else %}
-                                  <li class="disabled"><a href="">&laquo; {% trans 'Previous' %}</a></li>
+                                  <li class="disabled"><a href="">&laquo; </a></li>
                               {% endif %}
 
                               {% for num in comments.paginator.page_range %}
@@ -114,11 +114,13 @@
 
                                 
                               {% if comments.has_next %}
-                                <li><a href="?page={{ comments.next_page_number }}">{% trans 'Next' %} &raquo;</a></li>
+                                <li><a href="?page={{ comments.next_page_number }}"> &raquo;</a></li>
                               {% else %}
-                                  <li class="disabled"><a href="">{% trans 'Next' %} &raquo;</a></li>  
+                                  <li class="disabled"><a href=""> &raquo;</a></li>  
                               {% endif %}
-                               
+                               <li class="disabled">
+                                  <span> Page {{ comments.number }} of {{ comments.paginator.num_pages }}</span>
+                              </li>
                             </ul>
                    
                      
