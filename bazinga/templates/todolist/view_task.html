@@ -3,8 +3,12 @@
 {% load staticfiles %}
 {% load i18n %}
 {% block content %} 
+{% load widget_tweaks %}
+<link rel="stylesheet" href="{% static "css/plugins/datepicker/datepicker3.css" %}">
+<link rel="stylesheet" href="{% static "css/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css" %}">
 <link href="{% static "css/custom.css" %}" rel="stylesheet">
 <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+<link href="{% static "css/plugins/iCheck/square/blue.css" %}" rel="stylesheet">
     
     <div class="wrapper">
 
@@ -37,27 +41,34 @@
             <div class="row">
           {% ifequal auth_ok 1 %}
 
-            
-
             <form action="" method="POST">
             {% csrf_token %}
-            <div class="col-md-7">
+              <div class="col-md-7">
                 <div class="box box-primary">
                     <div class="box-header with-border">
                         <h3 class="box-title">Task "{{ task }}"</h3>
                     </div>
                     
                     <div class="box-body">
-                        <p><strong>In list:</strong> <a href="{% url 'todo-incomplete_tasks' task.list.id task.list.slug %}" class="showlink">{{ task.list }}</a><br />
-                        <strong>Assigned to:</strong> {{ task.assigned_to.first_name }} {{ task.assigned_to.last_name }}<br />
-                        <strong>Created by:</strong> {{ task.created_by.first_name }} {{ task.created_by.last_name }}<br />
-                        <strong>Due date:</strong>  {{ task.due_date }}<br />
-                        <strong>Completed:</strong> {{ form.completed }}<br />
-                        </p>
-
-
+                      <dl class="dl-horizontal">
+                        <dt>In list : </dt>
+                        <dd><a href="{% url 'todo-incomplete_tasks' task.list.id task.list.slug %}" class="showlink">{{ task.list }}</a></dd>
+                        <dt>Assigned to : </dt>
+                        <dd>{{ task.assigned_to.first_name }} {{ task.assigned_to.last_name }} ( <a href="{% url 'userena_profile_detail' task.assigned_to.username %}">{{ task.assigned_to.username }}</a> )</dd>                        
+                        <dt>Created by : </dt>
+                        <dd>{{ task.created_by.first_name }} {{ task.created_by.last_name }} ( <a href="{% url 'userena_profile_detail' task.created_by.username %}">{{ task.created_by.username }}</a> )</dd>
+                        <dt>Due date : </dt>
+                        <dd>{{ task.due_date }}</dd>
+                        <dt>Completed : </dt>
+                        <dd class="icheck">{% render_field form.completed class+="form-control" disabled="disabled" %}</dd>
+                      </dl>
+                        
                         {% if task.note %}
-                        <div class="task_note"><strong>Note:</strong> {{ task.note|safe|urlize|linebreaks }}</div>
+                          <fieldset class="scheduler-border">
+                            <legend class="scheduler-border">Note : </legend>
+                            {{ task.note|safe|urlize|linebreaks }}
+                          </fieldset>
+                          
                         {% endif %}
 
                         
@@ -126,52 +137,89 @@
                      
                         </div>
                       </div>
-                        <h3>Add comment</h3>
-
-                        <textarea name="comment-body"></textarea>
-                        <p><input class="todo-button"type="submit" value="Submit"></p>
+                      <fieldset class="scheduler-border">
+                        <legend class="scheduler-border">Add comment : {{ request.path|urlencode }}</legend>
+                        
+                        <textarea id="comment_body" name="comment-body" class="form-control"></textarea>
+                        <input class="btn btn-primary form-control" type="submit" value="Send Comment">
+                      </fieldset>
+                                                
                     </div>
                 </div>
             </div>
 
             <div class="col-md-5">
-            <h3>Edit Task</h3>
+              <div class="box box-default collapsed-box">
+                <div class="box-header with-border">
+                  <h3 class="box-title">Edit Task</h3>
+                  <div class="box-tools pull-right">
+                    <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+                    <!-- <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-remove"></i></button> -->
+                  </div>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                  {{ form.management_form }}
+                  {{ form.id }}
 
-            <table>
-                {{ form.management_form }}
-                {{ form.id }}
-            <tr>
-                <td>Title:</td>
-                <td>{{ form.title }}  </td>
-            </tr>
+                  <div class="form-group">
+                    <label for="title" class="col-sm-3 control-label">Title:</label>
+                    <div class="col-sm-9">
+                      {% render_field form.title class+="form-control" %}
+                    </div>
+                  </div>
 
-            <tr>
-                <td>List:</td>
-                <td>{{ form.list }}  </td>
-            </tr>
+                  <div class="form-group">
+                    <label for="list" class="col-sm-3 control-label">List:</label>
+                    <div class="col-sm-9">
+                      {% render_field form.list class+="form-control" %}
+                    </div>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="due_date" class="col-sm-3 control-label">Due:</label>
+                    <div class="col-sm-9">
+                      {% render_field form.due_date class+="form-control datePicker" %}
+                    </div>
+                  </div>
+                 
+                  <div class="form-group">
+                    <label for="assigned_to" class="col-sm-3 control-label">Assigned to:</label>
+                    <div class="col-sm-9">
+                      {% render_field form.assigned_to class+="form-control" %}
+                    </div>
+                  </div>
+                 
+            
+                  <div class="form-group">
+                    <label for="note" class="col-sm-3 control-label">Note:</label>
+                    <div class="col-sm-9">
+                      {% render_field form.note class+="form-control" %}
+                    </div>
+                  </div>
+            
 
-            <tr>
-                <td>Due:</td>
-                <td>{{ form.due_date }}  </td>
-            </tr>
+                  <div class="form-group">
+                    <label for="priority" class="col-sm-3 control-label">Priority:</label>
+                    <div class="col-sm-9">
+                      {% render_field form.priority class+="form-control" min="1" max="3" %}
+                      <!-- <input id="id_priority" class="form-control" type="number" name="priority" min="1" max="3"> -->
+                    </div>
+                  </div>
 
-            <tr>
-                <td>Assigned to:</td>
-                <td>{{ form.assigned_to }}  </td>
-            </tr>
-
-            <tr>
-                <td valign="top">Note:</td>
-                <td>{{ form.note }}  </td>
-            </tr>
-
-            <tr>
-                <td>Priority:</td>
-                <td>{{ form.priority }}  </td>
-            </tr>
-
-            </table>
-            <p><input type="submit" class="todo-button" name="edit_task" value="Edit task"></p>
+                  <div class="form-group">
+                    <label for="priority" class="col-sm-3 control-label">Completed:</label>
+                    <div class="col-sm-9">
+                      {% render_field form.completed class+="form-control" %}
+                      <!-- <input id="id_priority" class="form-control" type="number" name="priority" min="1" max="3"> -->
+                    </div>
+                  </div>
+            
+                  
+                </div>
+                <div class="box-footer">
+                  <input type="submit" class="btn btn-info pull-right todo-button" name="edit_task" value="Edit task">
+                </div>
+              </div>  
             </div>
 
 
@@ -251,6 +299,39 @@
            immediately after the control sidebar -->
       <div class="control-sidebar-bg"></div>
     </div><!-- ./wrapper -->
-
+    <script src="{% static "css/plugins/datepicker/bootstrap-datepicker.js" %}"></script>
+    <!-- Bootstrap WYSIHTML5 -->
+    <script src="{% static "css/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js" %}"></script>
+    
+<script src="{% static "css/plugins/iCheck/icheck.min.js" %}"></script>
+    <script>
+      $(function () {
+        $('input').iCheck({
+          checkboxClass: 'icheckbox_square-blue',
+          radioClass: 'iradio_square-blue',
+          increaseArea: '20%' // optional
+        });
+      });
+    </script>
+    <script>
+      $('#comment_body').wysihtml5({
+        "font-styles": true, //Font styling, e.g. h1, h2, etc. Default true
+        "emphasis": true, //Italics, bold, etc. Default true
+        "lists": true, //(Un)ordered lists, e.g. Bullets, Numbers. Default true
+        "html": false, //Button which allows you to edit the generated HTML. Default false
+        "link": true, //Button to insert a link. Default true
+        "image": true, //Button to insert an image. Default true,
+        "color": false //Button to change color of font  
+      });
+     
+    </script>
+    <script>
+      $('#id_due_date').datepicker({
+          startDate: '0d',
+          autoclose: true,
+          clearBtn: true,
+          format: 'mm/dd/yyyy',
+      });      
+    </script>
    
 {% endblock %}

@@ -4,6 +4,16 @@
 {% load widget_tweaks %}
 {% block content %}
 
+{% url 'home' as dashboard %}
+{% url 'userena_profile_detail' user.username  as my_profile%}
+{% url 'userena_profile_list' as url_accounts %}
+{% url 'messages_inbox' as url_inbox %}
+{% url 'messages_compose' as url_compose %}
+{% url 'messages_outbox' as url_outbox %}
+{% url 'messages_trash' as url_trash %}
+{% url 'todo-lists' as url_todolist %}
+{% url 'todo-mine' as url_mine %}
+
 <section class="sidebar">
           <!-- Sidebar user panel -->
           <div class="user-panel">
@@ -28,40 +38,47 @@
           <!-- sidebar menu: : style can be found in sidebar.less -->
           <ul class="sidebar-menu">
             <li class="header">MAIN NAVIGATION</li>
-            <li>
+            <li class="{% if request.path == dashboard %}active{% endif %}">
               <a href="{% url 'home' %}">
                 <i class="fa fa-dashboard"></i> <span>Dashboard</span></i>
               </a>              
             </li>            
             
-            <li class="treeview">
+            <li class="treeview {% if 'accounts' in request.path %}active{% endif %}">
               <a href="#">
                 <i class="fa fa-user"></i>
                 <span>Users</span>
                 <i class="fa fa-angle-left pull-right"></i>
               </a>
               <ul class="treeview-menu">
-                {% if user.is_authenticated %}<li class="{% if 'accounts/{{ user.username }}' in request.path %}active{% endif %}"><a href="{% url 'userena_profile_detail' user.username %}"><i class="fa fa-circle-o"></i> My Profile</a></li>{% endif %}
-                <li><a href="{% url 'userena_profile_list' %}"><i class="fa fa-circle-o"></i> Users List</a></li>                
+                {% if user.is_authenticated %}<li class="{% if request.path == my_profile %}active{% endif %}"><a href="{% url 'userena_profile_detail' user.username %}"><i class="fa fa-circle-o"></i> My Profile</a></li>{% endif %}
+                <li class="{% if request.path == url_accounts %}active{% endif %}"><a href="{% url 'userena_profile_list' %}"><i class="fa fa-circle-o"></i> Users List</a></li>                
               </ul>
-            </li>            
+            </li>
+            {% if user.is_authenticated %}
             <li class="treeview {% if 'messages' in request.path %}active{% endif %}">
               <a href="">
                 <i class="fa fa-envelope"></i> <span>Mailbox</span>
                 <i class="fa fa-angle-left pull-right"></i>
               </a>
               <ul class="treeview-menu">
-                <li class="{% if 'inbox' in request.path %}active{% endif %}"><a href="{% url 'messages_inbox' %}"><i class="fa fa-circle-o"></i> {% trans "Inbox" %} <span class="label label-primary pull-right">{{ messages_inbox_count }}</span></a></li>
-                <li class="{% if 'compose' in request.path %}active{% endif %}"><a href="{% url 'messages_compose' %}"><i class="fa fa-circle-o"></i> {% trans "New Message" %}</a></li>
-                <li class="{% if 'outbox' in request.path %}active{% endif %}"><a href="{% url 'messages_outbox' %}"><i class="fa fa-circle-o"></i> {% trans "Sent Messages" %}</a></li>
-                <li class="{% if 'trash' in request.path %}active{% endif %}"><a href="{% url 'messages_trash' %}"><i class="fa fa-circle-o"></i> {% trans "Trash" %}</a></li>
+                <li class="{% if request.path == url_inbox %}active{% endif %}"><a href="{% url 'messages_inbox' %}"><i class="fa fa-circle-o"></i> {% trans "Inbox" %} <span class="label label-primary pull-right">{{ messages_inbox_count }}</span></a></li>
+                <li class="{% if request.path == url_compose %}active{% endif %}"><a href="{% url 'messages_compose' %}"><i class="fa fa-circle-o"></i> {% trans "New Message" %}</a></li>
+                <li class="{% if request.path == url_outbox %}active{% endif %}"><a href="{% url 'messages_outbox' %}"><i class="fa fa-circle-o"></i> {% trans "Sent Messages" %}</a></li>
+                <li class="{% if request.path == url_trash %}active{% endif %}"><a href="{% url 'messages_trash' %}"><i class="fa fa-circle-o"></i> {% trans "Trash" %}</a></li>
               </ul>
             </li>
-            <li class="{% if 'todolist' in request.path %}active{% endif %}">
-              <a href="{% url 'todo-lists' %}">
-                <i class="fa fa-check-square-o"></i> <span>Todo List</span></i>
-              </a>              
-            </li>             
+            <li class="treeview {% if 'todolist' in request.path %}active{% endif %}">
+              <a href="">
+                <i class="fa fa-check-square-o"></i> <span>Todo List</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">   
+                <li class="{% if request.path == url_todolist %}active{% endif %}"><a href="{% url 'todo-lists' %}"><i class="fa fa-circle-o"></i> {% trans "All List" %} {{url}}</a></li>
+                <li class="{% if request.path == url_mine %}active{% endif %}"><a href="{% url 'todo-mine' %}"><i class="fa fa-circle-o"></i> {% trans "My tasks" %}</a></li>                
+              </ul>
+            </li>
+            {% endif %}
           </ul>
         </section>
         {% endblock %}

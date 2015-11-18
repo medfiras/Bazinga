@@ -128,10 +128,10 @@ def edit_list(request, list_id):
 		else:			
 			form = EditListForm(instance=list)
 					
-			# if task.due_date:
-			# 	thedate = task.due_date
-			# else:
-			# 	thedate = datetime.datetime.now()
+			if task.due_date:
+				thedate = task.due_date
+			else:
+				thedate = datetime.datetime.now()
 	else:		
 		messages.info(request, "You do not have permission to view/edit this list.")
 
