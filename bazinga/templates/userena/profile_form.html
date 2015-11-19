@@ -9,14 +9,6 @@
 
 {% block content %}
 
-<!-- <link href="{% static "css/jquery-ui.css" %}" rel="stylesheet"> -->
-<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.2/themes/flick/jquery-ui.css">
-<!-- <script src="http://code.jquery.com/jquery-1.10.2.js"></script>  -->
-<script src="http://code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
-<link href="{% static "css/profile.css" %}" rel="stylesheet">
-
-<!-- ######################################################################################## -->
-
 <script>  $(function() {
     
     $( "#id_birth_date" ).datepicker(
@@ -31,37 +23,8 @@
 });  
 </script>
 
-<div id="page-wrapper">
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="main-header page-header">
-                <h2>{% trans "Edit Profile" %}</h2>
-                <em><b>{{ profile.user.username }}</b></em>
-            </div>
-        </div>
-                <!-- /.col-lg-12 -->
-    </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="panel-body">
-                <div class="main-content">
-                    <!-- NAV TABS -->
-                    <ul id="profile-nav" class="nav nav-tabs">
-                        <li>
-                            <a href="{% url 'userena_profile_detail' user.username %}"><i class="fa fa-user"></i> {% trans "View profile" %}</a>
-                        </li>
-                        <li class="{% ifequal request.path|slice:"-6:" "/edit/" %}active{% endifequal %}">
-                            <a href="{% url 'userena_profile_edit' user.username %}"><i class="fa fa-cogs"></i> {% trans "Edit details" %}</a>
-                        </li>
-                        <li class="{% ifequal request.path|slice:"-10:" "/password/" %}active{% endifequal %}">
-                            <a href="{% url 'userena_password_change' user.username %}"><i class="fa fa-lock"></i> {% trans "Change password" %}</a>
-                        </li>
-                        <li class="{% ifequal request.path|slice:"-7:" "/email/" %}active{% endifequal %}">
-                            <a href="{% url 'userena_email_change' user.username %}"><i class="fa fa-envelope-o"></i> {% trans "Change email" %}</a>
-                        </li>
-                    </ul>
-                    <!-- END NAV TABS -->
-                    <div class="tab-content profile-page">
+
+                    
                         {% if form.errors %}
                         <div class="alert alert-danger">
                             {% for field in form %}
@@ -72,7 +35,7 @@
                         <div>
                             <!-- <form role="form" class="form-horizontal"> -->
                                 <fieldset>
-                                    <form action="" enctype="multipart/form-data" method="post" class="form-horizontal">{% csrf_token %}
+                                    <form action="{% url 'userena_profile_edit' user.username %}" enctype="multipart/form-data" method="post" class="form-horizontal">{% csrf_token %}
 
                                         {% for field in form %}
                                         
@@ -81,23 +44,19 @@
                                                 <div class="col-lg-7">
                                                     
                                                     {% render_field field class+="form-control datePicker" %}
+                                                    <p class="help-block">{{ field.help_text }}</p>
                                                     
                                                 </div>
                                             </div>
                                           
                                         {% endfor %}
-                                        </fieldset>
-                                        <input class="btn btn-custom-primary" type="submit" value="{% trans "Save changes" %}"/>
+                                        
+                                        <input class="btn btn-danger" type="submit" value="{% trans "Save changes" %}"/>
                                     </form>
                                 </fieldset>
                             
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+                   
 
 
 {% endblock %}

@@ -5,6 +5,7 @@ from django.utils.translation import ugettext as _
 from userena.models import UserenaBaseProfile
 from django.core.validators import URLValidator
 from django.contrib import admin
+import tagulous.models
 
 
 #from phonenumber_field.modelfields import PhoneNumberField
@@ -44,6 +45,8 @@ class MyProfile(UserenaBaseProfile):
 	twitter = models.CharField(max_length=100,validators=[URLValidator()],blank=True, null=True)
 	googleplus = models.CharField(max_length=100,validators=[URLValidator()],blank=True, null=True)
 	website = models.CharField(max_length=100,validators=[URLValidator()],blank=True, null=True)
+
+	tags = tagulous.models.TagField(autocomplete_initial=True,)
 
 	def __unicode__(self):
 		return '%s' % (self.user)

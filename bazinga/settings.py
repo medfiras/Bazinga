@@ -163,6 +163,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'actstream',
     'pagination_bootstrap',
+    'tagulous',
 )
 
 ACTSTREAM_SETTINGS = {
@@ -174,6 +175,24 @@ ACTSTREAM_SETTINGS = {
 }
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
+
+SERIALIZATION_MODULES = {
+    'xml':    'tagulous.serializers.xml_serializer',
+    'json':   'tagulous.serializers.json',
+    'python': 'tagulous.serializers.python',
+    'yaml':   'tagulous.serializers.pyyaml',
+}
+
+TAGULOUS_AUTOCOMPLETE_JS = (
+    'tagulous/lib/jquery.js',
+    'tagulous/lib/select2-3/select2.min.js',
+    'tagulous/tagulous.js',
+    'tagulous/adaptor/select2.js',
+)
+
+TAGULOUS_AUTOCOMPLETE_CSS = {
+    'all': ['tagulous/lib/select2-3/select2.css']
+}
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

@@ -1,10 +1,13 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% load url from future %}
 {% load staticfiles %}
-
+{% load widget_tweaks %}
 {% block content %}  
+
+{% url 'userena_profile_detail' user.username  as my_profile%}
 <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
-    
+ <link href="{% static "css/jquery.loadmask.css" %}" rel="stylesheet">    
     <div class="wrapper">
 
       <!-- Main Header -->
@@ -34,147 +37,223 @@
         <!-- Main content -->
         <section class="content">
 
-         <!-- /.panel-heading -->
-                        <div class="panel-body">
-                            <div class="main-content">
-                                <!-- NAV TABS -->
-                                <ul class="nav nav-tabs">
-                                    <li class="active"><a data-toggle="tab" href="#profile-tab"><i class="fa fa-user"></i> Profile</a></li>
-                                    <li class=""><a data-toggle="tab" href="#activity-tab"><i class="fa fa-rss"></i> Recent Activity</a></li>
-                                    <!-- <li class=""><a data-toggle="tab" href="#settings-tab"><i class="fa fa-gear"></i> Settings</a></li> -->
-                                </ul>
-                                <!-- END NAV TABS -->
-                                
-                                <div class="tab-content profile-page">
-                                    <!-- PROFILE TAB CONTENT -->
-                                    <div id="profile-tab" class="tab-pane profile active">
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <div class="user-info-left">
-                                                    <img alt="Profile Picture" src="{{ profile.get_mugshot_url }}">
-                                                    <h2>{{ profile.user.username }}</h2>
-                                                    <div class="contact">                                                        
-                                                        <ul class="list-inline social">
-                                                            <li>
-                                                                <a title="Facebook" href="{{ profile.facebook}}">
-                                                                    <i class="fa fa-facebook-square"></i>
-                                                                </a>
-                                                            </li>
-                                                            <li>
-                                                                <a title="Twitter" href="{{ profile.twitter}}">
-                                                                    <i class="fa fa-twitter-square"></i>
-                                                                </a>
-                                                            </li>
-                                                            <li>
-                                                                <a title="Google Plus" href="{{ profile.googleplus}}">
-                                                                    <i class="fa fa-google-plus-square"></i>
-                                                                </a>
-                                                            </li>
-                                                            <li>
-                                                                <a title="Github" href="{{ profile.github}}">
-                                                                    <i class="fa fa-github-square"></i>
-                                                                </a>
-                                                            </li>
-                                                        </ul>
-                                                        {% if user.username == profile.user.username %}
-                                                        <p class="text-center more">
-                                                            <a class="btn btn-custom-primary" href="{% url 'userena_profile_edit' user.username %}"><i class="fa fa-edit"></i> Edit Profile</a>
-                                                        </p>
-                                                        {% endif %}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-9">
-                                                <div class="user-info-right">
-                                                    <div class="basic-info">
-                                                        <h3><i class="fa fa-square"></i> Basic Information</h3>
-                                                        <p class="data-row">
-                                                            <span class="data-name">Username</span>
-                                                            <span class="data-value">{{ profile.user.username }}</span>
-                                                        </p>
-                                                        <p class="data-row">
-                                                            <span class="data-name">First name</span>
-                                                            <span class="data-value">{{ profile.user.first_name }}</span>
-                                                        </p>
-                                                        <p class="data-row">
-                                                            <span class="data-name">Last name</span>
-                                                            <span class="data-value">{{ profile.user.last_name }}</span>
-                                                        </p>
-                                                        <p class="data-row">
-                                                            <span class="data-name">Birth Date</span>
-                                                            <span class="data-value">{{ profile.birth_date|date:"d/m/Y" }}</span>
-                                                        </p>
-                                                        <p class="data-row">
-                                                            <span class="data-name">Gender</span>
-                                                            <span class="data-value">{{ profile.gender}}</span>
-                                                        </p>
-                                                        <p class="data-row">
-                                                            <span class="data-name">Website</span>
-                                                            <span class="data-value"><a href="{{ profile.website}}">{{ profile.website}}</a></span>
-                                                        </p>
-                                                        <p class="data-row">
-                                                            <span class="data-name">Last Login</span>
-                                                            <span class="data-value">{{ profile.user.last_login }}</span>
-                                                        </p>
-                                                        <p class="data-row">
-                                                            <span class="data-name">Date Joined</span>
-                                                            <span class="data-value">{{ profile.user.date_joined }}</span>
-                                                        </p>
-                                                    </div>
-                                                    <div class="contact_info">
-                                                        <h3><i class="fa fa-square"></i> Contact Information</h3>
-                                                        <p class="data-row">
-                                                            <span class="data-name">Email</span>
-                                                            <span class="data-value">{{ profile.user.email }}</span>
-                                                        </p>
-                                                        <p class="data-row">
-                                                            <span class="data-name">Phone</span>
-                                                            <span class="data-value">(+216) 22781934</span>
-                                                        </p>
-                                                        <p class="data-row">
-                                                            <span class="data-name">Address</span>
-                                                            <span class="data-value">{{ profile.address }}</span>
-                                                        </p>
-                                                    </div>
-                                                    <div class="about">
-                                                        <h3><i class="fa fa-square"></i> About Me</h3>
-                                                        <p>{{ profile.about }}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- END PROFILE TAB CONTENT -->
 
-                                    <!-- ACTIVITY TAB CONTENT -->
-                                    <div id="activity-tab" class="tab-pane activity">
-                                        <ul class="list-unstyled activity-list">
-                                            <li>
-                                                <i class="fa fa-magic activity-icon activity-icon-blue pull-left"></i>
-                                                <p>
-                                                    New checkin created : <span class="label label-info">checkin 1</span> <span class="timestamp">12 minutes ago</span>
-                                                </p>
-                                            </li>
-                                            
-                                            <li>
-                                                <i class="fa fa-thumbs-up activity-icon activity-icon-green pull-left"></i>
-                                                <p>
-                                                    Checkin  <span class="label label-success">checkin 1</span> compleated<span class="timestamp">December 12</span>
-                                                </p>
-                                            </li>
-                                           
-                                        </ul>
-                                        <p class="text-center more"><a class="btn btn-custom-primary" href="#">View more <i class="fa fa-long-arrow-right"></i></a></p>
-                                    </div>
-                                    <!-- END ACTIVITY TAB CONTENT -->
 
-                                    
-                                    <!-- END SETTINGS TAB CONTENT -->
+          <div class="row">
+            <div class="col-md-3">
+
+              <!-- Profile Image -->
+              <div class="box box-primary">
+                <div class="box-body box-profile">
+                  <img class="profile-user-img img-responsive img-circle" src="{{ profile.get_mugshot_url }}" alt="User profile picture">
+                  <h3 class="profile-username text-center">{{ profile.user.get_full_name }} ({{ profile.user.username }})</h3>
+                  <!-- <p class="text-muted text-center"> Team</p> -->
+
+                  <ul class="list-group list-group-unbordered">
+                    <li class="list-group-item">
+                      <b>Date Joined</b> <a class="pull-right">{{profile.user.date_joined|date:"d/m/Y"}}</a>
+                    </li>
+                    <li class="list-group-item">
+                      <b>Last Login</b> <a class="pull-right">{{profile.user.last_login|date:"d/m/Y"}}</a>
+                    </li>
+                    <li class="list-group-item">
+                      <b>Team</b> <a class="pull-right">{{ profile.team }}</a>
+                    </li>                    
+                  </ul>
+
+                 
+                </div><!-- /.box-body -->
+              </div><!-- /.box -->
+
+              <!-- About Me Box -->
+              <div class="box box-primary">
+                <div class="box-header with-border">
+                  <h3 class="box-title">About Me</h3>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                  <strong><i class="fa fa-calendar margin-r-5"></i>  Birth date</strong>
+                  <p class="text-muted">
+                    {{ profile.birth_date|date:"d/m/Y" }}
+                  </p>
+
+                  <hr>
+
+                  <strong><i class="fa fa-map-marker margin-r-5"></i> Location</strong>
+                  <p class="text-muted">{{ profile.address }}</p>
+
+                  <hr>
+
+                  <strong><i class="fa fa-map-marker margin-r-5"></i> City</strong>
+                  <p class="text-muted">{{ profile.city }}</p>
+
+                  <hr>
+
+                  <strong><i class="fa fa-pencil margin-r-5"></i> Skills</strong>
+                  <p><h4>
+                    {% for skill in profile.tags.all %}
+                        <span class="label label-primary">{{ skill.name }}</span>
+                    {% endfor %}                    
+                  </h4></p>
+
+                  <hr>
+
+                  <!-- <strong><i class="fa fa-file-text-o margin-r-5"></i> Social media</strong> -->
+                  <div class="text-center">
+                    <a herf="{{ profile.facebook}}" class="btn btn-social-icon btn-facebook" data-toggle="tooltip" data-placement="bottom" title="Facebook profile"><i class="fa fa-facebook"></i></a>
+                    <a href="{{ profile.github}}" class="btn btn-social-icon btn-github" data-toggle="tooltip" data-placement="bottom" title="Github"><i class="fa fa-github"></i></a>
+                    <a href="{{ profile.googleplus}}" class="btn btn-social-icon btn-google" data-toggle="tooltip" data-placement="bottom" title="Google plus profile"><i class="fa fa-google-plus"></i></a>
+                    <a href="{{ profile.twitter}}" class="btn btn-social-icon btn-twitter" data-toggle="tooltip" data-placement="bottom" title="Twitter profile"><i class="fa fa-twitter"></i></a>
+                    <a href="{{ profile.website}}" class="btn btn-social-icon btn-github" data-toggle="tooltip" data-placement="bottom" title="Website"><i class="fa fa-globe"></i></a>
+                  </div>
+                  
+                </div><!-- /.box-body -->
+              </div><!-- /.box -->
+            </div><!-- /.col -->
+            <div class="col-md-9">
+              <div class="nav-tabs-custom">
+
+                <ul class="nav nav-tabs">
+                  <li class="active"><a href="#Profile" data-toggle="tab" data-toggle="tabajax">{% trans "Profile details" %}</a></li>
+                  <li><a href="#editdetails" data-toggle="tab" data-tab-url="{% url 'userena_profile_edit' user.username %}" >{% trans "Edit details" %}</a></li>
+                  <li><a href="#password" data-toggle="tab" data-tab-url="{% url 'userena_password_change' user.username %}">{% trans "Change password" %}</a></li>
+                  <li><a href="#email" data-toggle="tab" data-tab-url="{% url 'userena_email_change' user.username %}">{% trans "Change email" %}</a></li>
+                </ul>
+                
+              <div class="tab-content profile-page">
+                <!-- PROFILE TAB CONTENT -->
+                <!-- <div class="active tab-pane" id="Profile">
+                </div> -->
+                <div class="active tab-pane" id="editdetails">
+                </div>
+                <div class="active tab-pane" id="password">
+                </div>
+                <div class="active tab-pane" id="email">
+                </div>
+                <div id="Profile" class="tab-pane active">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="user-info-left">
+                                <img alt="Profile Picture" src="{{ profile.get_mugshot_url }}">
+                                <h2>{{ profile.user.username }}</h2>
+                                <div class="contact">                                                        
+                                    <ul class="list-inline social">
+                                        <li>
+                                            <a title="Facebook" href="{{ profile.facebook}}">
+                                                <i class="fa fa-facebook-square"></i>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a title="Twitter" href="{{ profile.twitter}}">
+                                                <i class="fa fa-twitter-square"></i>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a title="Google Plus" href="{{ profile.googleplus}}">
+                                                <i class="fa fa-google-plus-square"></i>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a title="Github" href="{{ profile.github}}">
+                                                <i class="fa fa-github-square"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    {% if user.username == profile.user.username %}
+                                    <p class="text-center more">
+                                        <a class="btn btn-custom-primary" href="{% url 'userena_profile_edit' user.username %}"><i class="fa fa-edit"></i> Edit Profile</a>
+                                    </p>
+                                    {% endif %}
                                 </div>
-
                             </div>
                         </div>
-                        <!-- /.panel-body -->
+                        <div class="col-md-9">
+                            <div class="user-info-right">
+                                <div class="basic-info">
+                                    <h3><i class="fa fa-square"></i> Basic Information</h3>
+                                    <p class="data-row">
+                                        <span class="data-name">Username</span>
+                                        <span class="data-value">{{ profile.user.username }}</span>
+                                    </p>
+                                    <p class="data-row">
+                                        <span class="data-name">First name</span>
+                                        <span class="data-value">{{ profile.user.first_name }}</span>
+                                    </p>
+                                    <p class="data-row">
+                                        <span class="data-name">Last name</span>
+                                        <span class="data-value">{{ profile.user.last_name }}</span>
+                                    </p>
+                                    <p class="data-row">
+                                        <span class="data-name">Birth Date</span>
+                                        <span class="data-value">{{ profile.birth_date|date:"d/m/Y" }}</span>
+                                    </p>
+                                    <p class="data-row">
+                                        <span class="data-name">Gender</span>
+                                        <span class="data-value">{{ profile.gender}}</span>
+                                    </p>
+                                    <p class="data-row">
+                                        <span class="data-name">Website</span>
+                                        <span class="data-value"><a href="{{ profile.website}}">{{ profile.website}}</a></span>
+                                    </p>
+                                    <p class="data-row">
+                                        <span class="data-name">Last Login</span>
+                                        <span class="data-value">{{ profile.user.last_login }}</span>
+                                    </p>
+                                    <p class="data-row">
+                                        <span class="data-name">Date Joined</span>
+                                        <span class="data-value">{{ profile.user.date_joined }}</span>
+                                    </p>
+                                </div>
+                                <div class="contact_info">
+                                    <h3><i class="fa fa-square"></i> Contact Information</h3>
+                                    <p class="data-row">
+                                        <span class="data-name">Email</span>
+                                        <span class="data-value">{{ profile.user.email }}</span>
+                                    </p>
+                                   
+                                    <p class="data-row">
+                                        <span class="data-name">Address</span>
+                                        <span class="data-value">{{ profile.address }}</span>
+                                    </p>
+                                </div>
+                                <div class="about">
+                                    <h3><i class="fa fa-square"></i> About Me</h3>
+                                    <p>{{ profile.about }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END PROFILE TAB CONTENT -->
+
+                <!-- ACTIVITY TAB CONTENT -->
+                <div id="activity-tab" class="tab-pane activity">
+                    <ul class="list-unstyled activity-list">
+                        <li>
+                            <i class="fa fa-magic activity-icon activity-icon-blue pull-left"></i>
+                            <p>
+                                New checkin created : <span class="label label-info">checkin 1</span> <span class="timestamp">12 minutes ago</span>
+                            </p>
+                        </li>
+                        
+                        <li>
+                            <i class="fa fa-thumbs-up activity-icon activity-icon-green pull-left"></i>
+                            <p>
+                                Checkin  <span class="label label-success">checkin 1</span> compleated<span class="timestamp">December 12</span>
+                            </p>
+                        </li>
+                       
+                    </ul>
+                    <p class="text-center more"><a class="btn btn-custom-primary" href="#">View more <i class="fa fa-long-arrow-right"></i></a></p>
+                </div>
+                <!-- END ACTIVITY TAB CONTENT -->
+
+                
+                <!-- END SETTINGS TAB CONTENT -->
+            </div>
+
+            </div><!-- /.col -->
+          </div><!-- /.row -->
+
 
         </section><!-- /.content -->
       </div><!-- /.content-wrapper -->
@@ -246,5 +325,12 @@
       <div class="control-sidebar-bg"></div>
     </div><!-- ./wrapper -->
 
-   
+<script src="{% static "js/jquery.loadmask.js" %}"></script>
+<script src="{% static "js/bootstrap-remote-tabs.js" %}"></script>
+
+<script type="text/javascript">
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+</script>   
 {% endblock %}
