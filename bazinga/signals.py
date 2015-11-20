@@ -8,8 +8,9 @@ def create_profile(sender, **kwargs):
 	if kwargs["created"]:
 		from guardian.shortcuts import assign
 		assign('change_profile', instance, instance.get_profile())
-		profile = users.models.MyProfile()
+		profile = users.models.MyProfile()		
 		profile.setUser(sender)
 		profile.save()
 
 post_save.connect(create_profile, sender=User)
+

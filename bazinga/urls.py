@@ -56,6 +56,9 @@ urlpatterns = patterns('',
     # url(r'^(?P<username>[\@\.\w-]+)/email/$', userena_views.email_change, {'template_name': 'userena/profile_form.html'}, name='userena_email_change'),
     # url(r'^(?P<username>[\.\w-]+)/edit/$','userena.views.profile_edit',{'edit_profile_form': CustomEditProfileForm,'template_name': 'userena/profile_form.html'},name='userena_profile_edit'),
 
+    url(r'^(?P<username>[\@\.\w-]+)/password/complete/$', userena_views.direct_to_user_template, {'template_name': 'userena/profile_detail.html'}, name='userena_password_change_complete'),
+    # url(r'^(?P<username>[\@\.\w-]+)/password/$', userena_views.direct_to_user_template, {'template_name': 'userena/profile_detail.html'}, name='userena_password_change'),
+
     url(r'^todo/', todolist, name='todo'),
     url(r'^addtodo/$', addTodo, name='addtodo'),
     url(r'^todofinish/(?P<id>\d+)/$', todofinish, name='finish'),

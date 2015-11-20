@@ -29,10 +29,13 @@ class Team(models.Model):
 	# Custom manager lets us do things like Item.completed_tasks.all()
 	objects = models.Manager()
 
+def get_default_team():
+	return Team.objects.first()
+
 class MyProfile(UserenaBaseProfile):
 	user = models.OneToOneField(User,unique=True,verbose_name=_('user'),related_name='profile')
 	# team = models.OneToOneField(Team,unique=True,verbose_name=_('team'),related_name='team')
-	team = models.ForeignKey(Team,blank=True, null=True)
+	team = models.ForeignKey(Team,blank=False, null=False, default=get_default_team)
 	birth_date = models.DateField(blank=True, null=True)
 	address = models.TextField(blank=True, null=True)
 	#telephone = models.PhoneNumberField(blank=True)
@@ -46,7 +49,7 @@ class MyProfile(UserenaBaseProfile):
 	googleplus = models.CharField(max_length=100,validators=[URLValidator()],blank=True, null=True)
 	website = models.CharField(max_length=100,validators=[URLValidator()],blank=True, null=True)
 
-	tags = tagulous.models.TagField(autocomplete_initial=True,)
+	skills = tagulous.models.TagField(autocomplete_initial=True,blank=True, null=True)
 
 	def __unicode__(self):
 		return '%s' % (self.user)
