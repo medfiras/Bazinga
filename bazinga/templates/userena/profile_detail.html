@@ -6,8 +6,9 @@
 {% block content %}  
 
 {% url 'userena_profile_detail' user.username  as my_profile%}
+
 <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
- <link href="{% static "css/jquery.loadmask.css" %}" rel="stylesheet">    
+ 
     <div class="wrapper">
 
       <!-- Main Header -->
@@ -41,7 +42,7 @@
               {% for message in messages %}
                 <div class="row">
                   <div class="col-md-3"></div>
-                  <div class="alert alert-{{ message.skills }} alert-dismissable col-md-6">
+                  <div class="alert alert-{{ message.tags }} alert-dismissable col-md-6">
                     <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
                     {{ message }}
                   </div>
@@ -71,7 +72,9 @@
                       <b>Team</b> <a class="pull-right">{{ profile.team }}</a>
                     </li>                    
                   </ul>
-
+                  {% if user.username == profile.user.username %}
+                  <a href="{% url 'userena_profile_edit' user.username %}" class="btn btn-primary btn-block"><b>Edit Profile Details</b></a>
+                  {% endif %}
                  
                 </div><!-- /.box-body -->
               </div><!-- /.box -->
@@ -100,11 +103,11 @@
                   <hr>
 
                   <strong><i class="fa fa-pencil margin-r-5"></i> Skills</strong>
-                  <p><h4>
-                    {% for skill in profile.tags.all %}
+                  <p><h5>
+                    {% for skill in profile.skills.all %}
                         <span class="label label-primary">{{ skill.name }}</span>
                     {% endfor %}                    
-                  </h4></p>
+                  </h5></p>
 
                   <hr>
 
@@ -121,28 +124,13 @@
               </div><!-- /.box -->
             </div><!-- /.col -->
             <div class="col-md-9">
-              <div class="nav-tabs-custom">
-
-                <ul class="nav nav-tabs">
-                  <li class="active"><a href="#Profile" data-toggle="tab" data-toggle="tabajax">{% trans "Profile details" %}</a></li>
-                  {% if user.username == profile.user.username %}
-                  <li><a href="#editdetails" data-toggle="tab" data-tab-url="{% url 'userena_profile_edit' user.username %}" >{% trans "Edit details" %}</a></li>
-                  <li><a href="#password" data-toggle="tab" data-tab-url="{% url 'userena_password_change' user.username %}">{% trans "Change password" %}</a></li>
-                  <li><a href="#email" data-toggle="tab" data-tab-url="{% url 'userena_email_change' user.username %}">{% trans "Change email" %}</a></li>
-                  {% endif %}
-                </ul>
+             
                 
-              <div class="tab-content profile-page">
-                <!-- PROFILE TAB CONTENT -->
-                <!-- <div class="active tab-pane" id="Profile">
-                </div> -->
-                <div class="active tab-pane" id="editdetails">
-                </div>
-                <div class="active tab-pane" id="password">
-                </div>
-                <div class="active tab-pane" id="email">
-                </div>
-                <div id="Profile" class="tab-pane active">
+             <div class="box box-primary">
+                <div class="box-header with-border">
+                  <h3 class="box-title">Profile Details</h3>
+                </div><!-- /.box-header -->
+                <div class="box-body">
                     <div class="row">
                         <div class="col-md-3">
                             <div class="user-info-left">
@@ -238,29 +226,7 @@
                 </div>
                 <!-- END PROFILE TAB CONTENT -->
 
-                <!-- ACTIVITY TAB CONTENT -->
-                <div id="activity-tab" class="tab-pane activity">
-                    <ul class="list-unstyled activity-list">
-                        <li>
-                            <i class="fa fa-magic activity-icon activity-icon-blue pull-left"></i>
-                            <p>
-                                New checkin created : <span class="label label-info">checkin 1</span> <span class="timestamp">12 minutes ago</span>
-                            </p>
-                        </li>
-                        
-                        <li>
-                            <i class="fa fa-thumbs-up activity-icon activity-icon-green pull-left"></i>
-                            <p>
-                                Checkin  <span class="label label-success">checkin 1</span> compleated<span class="timestamp">December 12</span>
-                            </p>
-                        </li>
-                       
-                    </ul>
-                    <p class="text-center more"><a class="btn btn-custom-primary" href="#">View more <i class="fa fa-long-arrow-right"></i></a></p>
-                </div>
-                <!-- END ACTIVITY TAB CONTENT -->
-
-                
+                               
                 <!-- END SETTINGS TAB CONTENT -->
             </div>
 
@@ -338,8 +304,6 @@
       <div class="control-sidebar-bg"></div>
     </div><!-- ./wrapper -->
 
-<script src="{% static "js/jquery.loadmask.js" %}"></script>
-<script src="{% static "js/bootstrap-remote-tabs.js" %}"></script>
 
 <script type="text/javascript">
 $(function () {
