@@ -12,6 +12,12 @@
         </div><!-- /.login-logo -->
         <div class="login-box-body">
             <p class="login-box-msg">Sign in to start your session</p>
+            
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    {{ form.non_field_errors }}
+                </div> 
+            {% endif %}
             <form role="form" action="" method="post">{% csrf_token %}
                 <div class="form-group has-feedback">
                     <input class="form-control" placeholder="E-mail or username" name="identification">

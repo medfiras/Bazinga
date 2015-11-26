@@ -151,8 +151,8 @@ INSTALLED_APPS = (
     'django_messages',
     'widget_tweaks',
     'todolist',
-    # 'filer',
-    # 'event_rsvp',
+    'filer',
+    'events',
     # 'userena.contrib.umessages',
     # Uncomment the next line to enable the admin:
     # 'django_admin_bootstrapped',

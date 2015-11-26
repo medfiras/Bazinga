@@ -18,6 +18,10 @@ from django.contrib.auth import views as auth_views
 from userena import views as userena_views
 from userena import settings as userena_settings
 from accounts.forms import *
+
+# from events.views import *
+
+
 # import autocomplete_light.shortcuts as al
 
 
@@ -46,17 +50,17 @@ urlpatterns = patterns('',
 
     url(r'^accounts/', include('userena.urls')),
     # url(r'^messages/', include('userena.contrib.umessages.urls')),
-    url(r'^messages/', include('django_messages.urls')),
-    # url(r'^events/', include('event_rsvp.urls')),
+    url(r'^messages/', include('django_messages.urls')),    
     url(r'^todolist/', include('todolist.urls')),
-    
+    # url(r'^events/', include('events.urls')),    
 
     # url(r'^(?P<username>[\.\w]+)/edit/$',userena_views.profile_edit, {'template_name': 'userena/profile_form.html'},name='userena_profile_edit'),
     # url(r'^(?P<username>[\@\.\w-]+)/password/$', userena_views.password_change, {'template_name': 'userena/profile_form.html'}, name="userena_password_change"),
     # url(r'^(?P<username>[\@\.\w-]+)/email/$', userena_views.email_change, {'template_name': 'userena/profile_form.html'}, name='userena_email_change'),
     url(r'^(?P<username>[\.\w-]+)/edit/$','userena.views.profile_edit',{'edit_profile_form': CustomEditProfileForm,'template_name': 'userena/profile_form.html'},name='userena_profile_edit'),
 
-    url(r'^(?P<username>[\@\.\w-]+)/password/complete/$', userena_views.direct_to_user_template, {'template_name': 'userena/profile_detail.html'}, name='userena_password_change_complete'),
+    url(r'^(?P<username>[\@\.\w-]+)/password/complete/$', userena_views.direct_to_user_template, {'template_name': 'userena/password_form.html'}, name='userena_password_change_complete'),
+    url(r'^(?P<username>[\@\.\w-]+)/email/complete/$', userena_views.direct_to_user_template, {'template_name': 'userena/email_form.html'}, name='userena_email_change_complete'),
     # url(r'^(?P<username>[\@\.\w-]+)/password/$', userena_views.direct_to_user_template, {'template_name': 'userena/profile_detail.html'}, name='userena_password_change'),
 
     url(r'^todo/', todolist, name='todo'),
