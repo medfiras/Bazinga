@@ -7,7 +7,7 @@
 <ul>
     {% for event in object_list %}
         <li>
-            {% include "event_rsvp/partials/event_item.html" %}
+            {% include "events/partials/event_item.html" %}
         </li>
     {% endfor %}
 </ul>
@@ -15,7 +15,7 @@
 <h1>{% trans "My events" %}</h1>
 <ul>
     {% for guest in my_participations %}
-        <li><a href="{% url "rsvp_guest_update" pk=guest.pk event_slug=guest.event.slug %}">{{ guest }}</a></li>
+        <li><a href="{% url "guest_update" pk=guest.pk event_slug=guest.event.slug %}">{{ guest }}</a></li>
     {% endfor %}
 </ul>
 {% endblock %}

@@ -13,6 +13,25 @@ from filer.fields.image import FilerImageField
 
 from .settings import REQUIRED_FIELDS_CHOICES
 
+from easy_thumbnails.fields import ThumbnailerImageField
+from events import settings as events_settings
+
+from events.utils import generate_sha1, get_datetime_now
+
+
+def upload_to_mugshot(instance, filename):
+    """
+    Uploads an image for an event and saving it
+    under unique hash for the image. This is for privacy reasons so others
+    can't just browse through the mugshot directory.
+    """
+    extension = filename.split('.')[-1].lower()
+    salt, hash = generate_sha1(instance.pk)
+    path = events_settings.EVENTS_IMAGE_PATH % {'date_now': get_datetime_now().now()}
+    return '%(path)s%(hash)s.%(extension)s' % {'path': path,
+                                               'hash': hash[:10],
+                                               'extension': extension}
+
 
 class MultiSelectFormField(forms.MultipleChoiceField):
     widget = forms.CheckboxSelectMultiple
@@ -111,7 +130,7 @@ class Event(models.Model):
     :hide_available_seats: Checkfield to hide the information about available
       seats in the templates.
     :max_seats_per_guest: Maximum amount of seats per guest.
-    :allow_anonymous_rsvp: Checkbox to allow anonymous responses.
+    :allow_anonymous: Checkbox to allow anonymous responses.
     :required_fields: Checkbox to select required guest fields.
     :template_name: Name can be set, if this event should be reusable.
     :is_published: Checkbox to publish/unpublish an event.
@@ -219,9 +238,9 @@ class Event(models.Model):
             ' in order to hide that number from your users.'),
     )
 
-    allow_anonymous_rsvp = models.BooleanField(
+    allow_anonymous = models.BooleanField(
         default=False,
-        verbose_name=_('Allow anonymous RSVP'),
+        verbose_name=_('Allow anonymous'),
         help_text=_('Even anonymous users can rsvp, without adding any info.'),
     )
 
@@ -253,11 +272,24 @@ class Event(models.Model):
         default=False,
     )
 
-    image = FilerImageField(
-        verbose_name=_('Image'),
-        related_name='rsvp_event_images',
-        null=True, blank=True,
-    )
+
+    IMAGE_SETTINGS = {'size': (events_settings.EVENTS_IMAGE_SIZE,
+                                 events_settings.EVENTS_IMAGE_SIZE),
+                        'crop': events_settings.EVENTS_IMAGE_CROP_TYPE}
+
+    image = ThumbnailerImageField(_('image'),
+                                    blank=True,
+                                    upload_to=upload_to_mugshot,
+                                    resize_source=IMAGE_SETTINGS,
+                                    help_text=_('An event image displayed in your event page.'),
+                                    null=True,)
+
+    # image = models.ImageField(
+    #     upload_to='event',
+    #     verbose_name=_('Image'),
+    #     related_name='event_images',
+    #     null=True, blank=True,
+    # )
 
     def __unicode__(self):
         if self.template_name:
@@ -277,7 +309,7 @@ class Event(models.Model):
                     self.slug = self.slug[:-1] + str(number + 1)
         super(Event, self).save(*args, **kwargs)
 
-    def get_absolute_url(self, url='rsvp_event_detail'):
+    def get_absolute_url(self, url='event_detail'):
         return reverse(url, kwargs={
             'slug': self.slug,
             'year': '{0:04d}'.format(self.start.year),
@@ -286,13 +318,13 @@ class Event(models.Model):
         })
 
     def get_update_url(self):
-        return self.get_absolute_url(url='rsvp_event_update')
+        return self.get_absolute_url(url='event_update')
 
     def get_delete_url(self):
-        return self.get_absolute_url(url='rsvp_event_delete')
+        return self.get_absolute_url(url='event_delete')
 
     def get_template_url(self):
-        return reverse('rsvp_event_create_from_template', kwargs={
+        return reverse('event_create_from_template', kwargs={
             'pk': self.pk})
 
     def get_free_seats(self):

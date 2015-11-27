@@ -40,5 +40,5 @@
         </tr>
     {% endif %}
 </table>
-<a href="{% url "rsvp_guest_delete" pk=object.pk event_slug=object.event.slug %}">{% trans "Delete this guest" %}</a>
+<a href="{% url "guest_delete" pk=object.pk event_slug=object.event.slug %}">{% trans "Delete this guest" %}</a>
 {% endblock %}

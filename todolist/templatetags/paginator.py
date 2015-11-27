@@ -17,10 +17,7 @@ def paginator(context, adjacent_pages=2):
     last page links in addition to those created by the object_list generic
     view.
 
-    """
-    print "++++++++++++++++++++++++++++++++++++++++++++++++"
-    print context['comments'].paginator.page_range
-    print "++++++++++++++++++++++++++++++++++++++++++++++++"
+    """    
     startPage = max(context['comments'] - int(adjacent_pages), 1)
     if startPage <= 3: 
         startPage = 1
