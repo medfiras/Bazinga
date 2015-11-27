@@ -339,6 +339,16 @@ class Event(models.Model):
             return False
         return True
 
+    def get_image_url(self):
+        """
+        Returns the image of the event.        
+        :return:
+            ``None`` when Image is not used and no default image is supplied
+            by ``EVENTS_IMAGE_DEFAULT``.
+        """        
+        if self.image:
+            return self.image.url
+
 
 class Guest(models.Model):
     """

@@ -86,7 +86,10 @@
             <th>{% trans "Free seats" %}</th>
             <td>{{ object.get_free_seats }}</td>
         </tr>
-   
+        <tr>
+            <th>{% trans "Image" %}</th>
+            <td><img src="{{ object.get_image_url }}" /></td>
+        </tr>
 </table>
 {% if user.is_staff %}
     <ul>
