@@ -111,4 +111,7 @@ setup = {
 }
 
 for tagname, defaults in setup.items():
+    print "+"*80
+    print defaults
+    print "+"*80
     register.tag(tagname, get_box_count(**defaults))
