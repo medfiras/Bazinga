@@ -1,11 +1,11 @@
-{% extends "django_messages/base.html" %}
+{% extends "private_messages/base.html" %}
 {% load i18n %}
 {% load url from future %}
 {% load staticfiles %}
 {% load widget_tweaks %}
 {% block content %}
-	
-   <link href="{% static "css/zabuto_calendar.css" %}" rel="stylesheet">
+
+   
     
     <!-- Theme style -->
     <link rel="stylesheet" href="{% static "css/AdminLTE.css" %}">
@@ -14,8 +14,8 @@
     
     <!-- iCheck -->
     <link rel="stylesheet" href="{% static "css/plugins/iCheck/flat/blue.css" %}">
-<link rel="stylesheet" href="{% static "css/plugins/datatables/dataTables.bootstrap.css" %}">
-
+    <link rel="stylesheet" href="{% static "css/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css" %}">
+    <link href="{% static "css/zabuto_calendar.css" %}" rel="stylesheet">
 
     <div class="wrapper">
 
@@ -37,8 +37,7 @@
           </h1>
           <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li>Mailbox</li>
-            <li class="active">Inbox</li>
+            <li class="active">Mailbox</li>
           </ol>
         </section>
 
@@ -78,48 +77,43 @@
             <div class="col-md-9">
               <div class="box box-primary">
                 <div class="box-header with-border">
-                  <h3 class="box-title">Inbox</h3>
-                  <!-- <div class="box-tools pull-right">
-                    <div class="has-feedback">
-                      <input type="text" class="form-control input-sm" placeholder="Search Mail">
-                      <span class="glyphicon glyphicon-search form-control-feedback"></span>
-                    </div>
-                  </div> -->
-                </div>
+                  <h3 class="box-title">Read Mail</h3>
+                  <div class="box-tools pull-right">
+                    <a href="#" class="btn btn-box-tool" data-toggle="tooltip" title="Previous"><i class="fa fa-chevron-left"></i></a>
+                    <a href="" class="btn btn-box-tool" data-toggle="tooltip" title="Next"><i class="fa fa-chevron-right"></i></a>
+                  </div>
+                </div><!-- /.box-header -->
                 <div class="box-body no-padding">
-                    <div class="box-body">
-                        <table class="table table-bordered table-striped table-hover" id="example2">
-
-                            <thead>
-                                <tr>
-                                    <th class="col-sm-1 text-center">Read</th>                                    
-                                    <th class="col-sm-2 text-center">Sender</th>
-                                    <th class="col-sm-3 text-center">Subject</th>
-                                    <th class="col-sm-3 text-center">Message</th>
-                                    <th class="col-sm-2 text-center">Date Time</th>
-                                    <th class="col-sm-1 text-center">Delete</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% if message_list %}
-			                    	{% for message in message_list %}
-				                        <tr>
-				                          <td class="text-center"><i class="fa {% if message.new %}fa-folder{% else %}fa-folder-open{% endif %} text-blue	"></i></td>				                          
-				                          <td class="mailbox-name"><a href="{{message.get_absolute_url }}">{{ message.sender }}</a></td>
-				                          <td class="mailbox-subject">{% if message.new %}<b>{% endif %}{{ message.subject|truncatechars:30  }}{% if message.new %}</b>{% endif %}</td>
-				                          <td class="mailbox-attachment">{{ message.body|striptags|truncatechars:30 }}</td>
-				                          <td class="mailbox-date">{{ message.sent_at|timesince }}</td>
-				                          <td class="mailbox-star text-center"><a href="{% url 'messages_delete' message.id %}"><i class="fa fa-trash-o text-red"></i></a></td>
-				                        </tr>
-		                       		{% endfor %}   
-			                    
-		                        {% endif %}                           
-                            </tbody>
-                        </table>
+                  <div class="mailbox-read-info">
+                    <h3>{{ message.subject }}</h3>
+                    <h5>From: {{ message.sender }} <span class="mailbox-read-time pull-right">{{ message.sent_at|date:_("DATETIME_FORMAT")}}</span></h5>
+                  </div><!-- /.mailbox-read-info -->
+                  <!-- <div class="mailbox-controls with-border text-center">
+                    <div class="btn-group">
+                      <a class="btn btn-default btn-sm" href="{% url 'messages_delete' message.id %}"><i class="fa fa-trash-o"></i></a>
+                      <button class="btn btn-default btn-sm" data-toggle="tooltip" title="Delete"><i class="fa fa-trash-o"></i></button> 
+                      
+                      <button class="btn btn-default btn-sm" data-toggle="tooltip" title="Reply"><i class="fa fa-reply"></i></button>
+                      <button class="btn btn-default btn-sm" data-toggle="tooltip" title="Forward"><i class="fa fa-share"></i></button>
                     </div>
-                
+                    <button class="btn btn-default btn-sm" data-toggle="tooltip" title="Print"><i class="fa fa-print"></i></button>
+                  </div> -->
+                  <div class="mailbox-read-message">
+                    {{ message.body|safe }}
+                  </div><!-- /.mailbox-read-message -->
                 </div><!-- /.box-body -->
-              
+                <div class="box-footer">
+                  
+                </div><!-- /.box-footer -->
+                <div class="box-footer">
+                  <div class="pull-right">
+                    <a class="btn btn-default" href="{% url 'messages_delete' message.id %}"><i class="fa fa-trash-o text-red"></i> Delete</a>
+                    <!-- <button class="btn btn-default"><i class="fa fa-share"></i> Forward</button> -->
+                  </div>
+                  <a href="{% url 'messages_reply' message.id %}" class="btn btn-default"><i class="fa fa-reply"></i> Reply</a>
+                  <a href="{% url 'messages_mark_unread' message.id %}" class="btn btn-default">{% trans "Mark Unread" %}</a>
+                  <!-- <button class="btn btn-default"><i class="fa fa-print"></i> Print</button> -->
+                </div><!-- /.box-footer -->
               </div><!-- /. box -->
             </div><!-- /.col -->
           </div><!-- /.row -->
@@ -295,35 +289,24 @@
       <div class="control-sidebar-bg"></div>
     </div><!-- ./wrapper -->
 
-   
     
-    
-     <!-- Slimscroll -->
+    <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+    <!-- Slimscroll -->
     <script src="{% static "css/plugins/slimScroll/jquery.slimscroll.min.js" %}"></script>
     <!-- FastClick -->
     <script src="{% static "css/plugins/fastclick/fastclick.min.js" %}"></script>
+   
+    <!-- iCheck -->
+    <script src="{% static "css/plugins/iCheck/icheck.min.js" %}"></script>
+    <!-- Bootstrap WYSIHTML5 -->
+    <script src="{% static "css/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js" %}"></script>
+    <script src="{% static "js/zabuto_calendar.js" %}"></script>
 
-    
-    <!-- Page Script -->
-    <script src="{% static "css/plugins/datatables/jquery.dataTables.min.js" %}"></script>
-	<script src="{% static "css/plugins/datatables/dataTables.bootstrap.min.js" %}"></script>
-	<script src="{% static "js/zabuto_calendar.js" %}"></script>
-	<!-- Bootstrap 3.3.5 -->
-    <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
-
-    <script>
-      
-		 $(function () {
-		        $("#example1").DataTable();
-		        $('#example2').DataTable({
-		            "paging": true,
-		            "lengthChange": true,
-		            "searching": true,
-		            "ordering": true,
-		            "info": true,
-		            "autoWidth": true
-		        });
-		    });
+   <script>
+      $(function () {
+        //Add text editor
+        $("#compose-textarea").wysihtml5();
+      });
     </script>
     <script type="application/javascript">
   $(document).ready(function () {

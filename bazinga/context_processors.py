@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.template import RequestContext
-import django_messages
+import private_messages
 
 def details(request):	
 	return {

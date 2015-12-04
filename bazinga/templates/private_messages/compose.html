@@ -1,4 +1,4 @@
-{% extends "django_messages/base.html" %}
+{% extends "private_messages/base.html" %}
 {% load i18n %}
 {% load url from future %}
 {% load staticfiles %}
@@ -37,7 +37,8 @@
           </h1>
           <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li class="active">Mailbox</li>
+            <li>Mailbox</li>
+            <li class="active">Compose</li>
           </ol>
         </section>
 
@@ -45,7 +46,7 @@
         <section class="content">
           <div class="row">
             <div class="col-md-3">
-              <a href="{% url 'messages_compose' %}" class="btn btn-primary btn-block margin-bottom">Compose</a>
+              <a href="{% url 'messages_inbox' %}" class="btn btn-primary btn-block margin-bottom">Back to Inbox</a>
               <div class="box box-solid">
                 <div class="box-header with-border">
                   <h3 class="box-title"><i class="fa fa-folder"></i> Folders</h3>
@@ -76,43 +77,39 @@
             </div><!-- /.col -->
             <div class="col-md-9">
               <div class="box box-primary">
+                <form action="" method="post">{% csrf_token %}
                 <div class="box-header with-border">
-                  <h3 class="box-title">Read Mail</h3>
-                  <div class="box-tools pull-right">
-                    <a href="#" class="btn btn-box-tool" data-toggle="tooltip" title="Previous"><i class="fa fa-chevron-left"></i></a>
-                    <a href="" class="btn btn-box-tool" data-toggle="tooltip" title="Next"><i class="fa fa-chevron-right"></i></a>
-                  </div>
+                  <h3 class="box-title">Compose New Message</h3>
                 </div><!-- /.box-header -->
-                <div class="box-body no-padding">
-                  <div class="mailbox-read-info">
-                    <h3>{{ message.subject }}</h3>
-                    <h5>From: {{ message.sender }} <span class="mailbox-read-time pull-right">{{ message.sent_at|date:_("DATETIME_FORMAT")}}</span></h5>
-                  </div><!-- /.mailbox-read-info -->
-                  <!-- <div class="mailbox-controls with-border text-center">
-                    <div class="btn-group">
-                      <a class="btn btn-default btn-sm" href="{% url 'messages_delete' message.id %}"><i class="fa fa-trash-o"></i></a>
-                      <button class="btn btn-default btn-sm" data-toggle="tooltip" title="Delete"><i class="fa fa-trash-o"></i></button> 
+                <div class="box-body">
+                  <div class="form-group">                    
+                    {% render_field form.recipient class+="form-control" placeholder="To:" %}
+                  </div>
+                  <div class="form-group">
+                    {% render_field form.subject class+="form-control" placeholder="Subject:" %}                    
+                  </div>
+                  <div class="form-group">
+                    <!-- <textarea id="compose-textarea" name="body" class="form-control" style="height: 300px">
                       
-                      <button class="btn btn-default btn-sm" data-toggle="tooltip" title="Reply"><i class="fa fa-reply"></i></button>
-                      <button class="btn btn-default btn-sm" data-toggle="tooltip" title="Forward"><i class="fa fa-share"></i></button>
+                    </textarea> -->
+                    {% render_field form.body class+="form-control" %}
+                  </div>
+                  <div class="form-group">
+                    <div class="btn btn-default btn-file">
+                      <i class="fa fa-paperclip"></i> Attachment
+                      <input type="file" name="attachment">
                     </div>
-                    <button class="btn btn-default btn-sm" data-toggle="tooltip" title="Print"><i class="fa fa-print"></i></button>
-                  </div> -->
-                  <div class="mailbox-read-message">
-                    {{ message.body|safe }}
-                  </div><!-- /.mailbox-read-message -->
+                    <p class="help-block">Max. 32MB</p>
+                  </div>
                 </div><!-- /.box-body -->
                 <div class="box-footer">
-                  
-                </div><!-- /.box-footer -->
-                <div class="box-footer">
                   <div class="pull-right">
-                    <a class="btn btn-default" href="{% url 'messages_delete' message.id %}"><i class="fa fa-trash-o text-red"></i> Delete</a>
-                    <!-- <button class="btn btn-default"><i class="fa fa-share"></i> Forward</button> -->
+                    <button class="btn btn-default"><i class="fa fa-pencil"></i> Draft</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-envelope-o"></i> Send</button>
                   </div>
-                  <a href="{% url 'messages_reply' message.id %}" class="btn btn-default"><i class="fa fa-reply"></i> Reply</a>
-                  <!-- <button class="btn btn-default"><i class="fa fa-print"></i> Print</button> -->
+                  <a href="{% url 'messages_inbox' %}" class="btn btn-default"><i class="fa fa-times"></i> Discard</a>
                 </div><!-- /.box-footer -->
+              </form>
               </div><!-- /. box -->
             </div><!-- /.col -->
           </div><!-- /.row -->
@@ -289,12 +286,13 @@
     </div><!-- ./wrapper -->
 
     
+    <!-- Bootstrap 3.3.5 -->
     <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
     <!-- Slimscroll -->
     <script src="{% static "css/plugins/slimScroll/jquery.slimscroll.min.js" %}"></script>
     <!-- FastClick -->
     <script src="{% static "css/plugins/fastclick/fastclick.min.js" %}"></script>
-   
+
     <!-- iCheck -->
     <script src="{% static "css/plugins/iCheck/icheck.min.js" %}"></script>
     <!-- Bootstrap WYSIHTML5 -->
@@ -302,10 +300,16 @@
     <script src="{% static "js/zabuto_calendar.js" %}"></script>
 
    <script>
-      $(function () {
-        //Add text editor
-        $("#compose-textarea").wysihtml5();
-      });
+      $('#id_body').wysihtml5({
+  "font-styles": true, //Font styling, e.g. h1, h2, etc. Default true
+  "emphasis": true, //Italics, bold, etc. Default true
+  "lists": true, //(Un)ordered lists, e.g. Bullets, Numbers. Default true
+  "html": false, //Button which allows you to edit the generated HTML. Default false
+  "link": true, //Button to insert a link. Default true
+  "image": true, //Button to insert an image. Default true,
+  "color": false //Button to change color of font  
+});
+     
     </script>
     <script type="application/javascript">
   $(document).ready(function () {

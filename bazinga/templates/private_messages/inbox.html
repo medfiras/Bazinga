@@ -1,11 +1,12 @@
-{% extends "django_messages/base.html" %}
+{% extends "private_messages/base.html" %}
 {% load i18n %}
 {% load url from future %}
 {% load staticfiles %}
 {% load widget_tweaks %}
+{% load inbox %}
 {% block content %}
-
-   
+	
+   <link href="{% static "css/zabuto_calendar.css" %}" rel="stylesheet">
     
     <!-- Theme style -->
     <link rel="stylesheet" href="{% static "css/AdminLTE.css" %}">
@@ -14,8 +15,8 @@
     
     <!-- iCheck -->
     <link rel="stylesheet" href="{% static "css/plugins/iCheck/flat/blue.css" %}">
-    <link rel="stylesheet" href="{% static "css/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css" %}">
-    <link href="{% static "css/zabuto_calendar.css" %}" rel="stylesheet">
+<link rel="stylesheet" href="{% static "css/plugins/datatables/dataTables.bootstrap.css" %}">
+
 
     <div class="wrapper">
 
@@ -38,7 +39,7 @@
           <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
             <li>Mailbox</li>
-            <li class="active">Compose</li>
+            <li class="active">Inbox</li>
           </ol>
         </section>
 
@@ -46,7 +47,7 @@
         <section class="content">
           <div class="row">
             <div class="col-md-3">
-              <a href="{% url 'messages_inbox' %}" class="btn btn-primary btn-block margin-bottom">Back to Inbox</a>
+              <a href="{% url 'messages_compose' %}" class="btn btn-primary btn-block margin-bottom">Compose</a>
               <div class="box box-solid">
                 <div class="box-header with-border">
                   <h3 class="box-title"><i class="fa fa-folder"></i> Folders</h3>
@@ -57,7 +58,7 @@
                 <div class="box-body no-padding">
                   <ul class="nav nav-pills nav-stacked">
                     <li class="active"><a href="{% url 'messages_inbox' %}"><i class="fa fa-inbox"></i> Inbox <span class="label label-primary pull-right">{{ messages_inbox_count }}</span></a></li>
-                    <li><a href="{% url 'messages_outbox' %}"><i class="fa fa-envelope-o"></i> Sent</a></li>
+                    <li><a href="{% url 'messages_outbox' %}"><i class="fa fa-envelope-o"></i> Sent<span class="label label-primary pull-right">{{ outbox_count }}A</span></a></li>
                     <li><a href="#"><i class="fa fa-file-text-o"></i> Drafts</a></li>                    
                     <li><a href="{% url 'messages_trash' %}"><i class="fa fa-trash-o"></i> Trash</a></li>
                   </ul>
@@ -77,39 +78,49 @@
             </div><!-- /.col -->
             <div class="col-md-9">
               <div class="box box-primary">
-                <form action="" method="post">{% csrf_token %}
                 <div class="box-header with-border">
-                  <h3 class="box-title">Compose New Message</h3>
-                </div><!-- /.box-header -->
-                <div class="box-body">
-                  <div class="form-group">                    
-                    {% render_field form.recipient class+="form-control" placeholder="To:" %}
-                  </div>
-                  <div class="form-group">
-                    {% render_field form.subject class+="form-control" placeholder="Subject:" %}                    
-                  </div>
-                  <div class="form-group">
-                    <!-- <textarea id="compose-textarea" name="body" class="form-control" style="height: 300px">
-                      
-                    </textarea> -->
-                    {% render_field form.body class+="form-control" %}
-                  </div>
-                  <div class="form-group">
-                    <div class="btn btn-default btn-file">
-                      <i class="fa fa-paperclip"></i> Attachment
-                      <input type="file" name="attachment">
+                  <h3 class="box-title">Inbox</h3>
+                  <!-- <div class="box-tools pull-right">
+                    <div class="has-feedback">
+                      <input type="text" class="form-control input-sm" placeholder="Search Mail">
+                      <span class="glyphicon glyphicon-search form-control-feedback"></span>
                     </div>
-                    <p class="help-block">Max. 32MB</p>
-                  </div>
+                  </div> -->
+                </div>
+                <div class="box-body no-padding">
+                    <div class="box-body">
+                        <table class="table table-bordered table-striped table-hover" id="example2">
+
+                            <thead>
+                                <tr>
+                                    <th class="col-sm-1 text-center">Read</th>                                    
+                                    <th class="col-sm-2 text-center">Sender</th>
+                                    <th class="col-sm-3 text-center">Subject</th>
+                                    <th class="col-sm-3 text-center">Message</th>
+                                    <th class="col-sm-2 text-center">Date Time</th>
+                                    <th class="col-sm-1 text-center">Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if message_list %}
+			                    	{% for message in message_list %}
+				                        <tr>
+				                          <td class="text-center"><i class="fa {% if message.new %}fa-folder{% else %}fa-folder-open{% endif %} text-blue	"></i></td>				                          
+				                          <td class="mailbox-name"><a href="{{message.get_absolute_url }}">{{ message.sender }}</a></td>
+				                          <td class="mailbox-subject">{% if message.new %}<b>{% endif %}{{ message.subject|truncatechars:30  }}{% if message.new %}</b>{% endif %}</td>
+				                          <td class="mailbox-attachment">{{ message.body|striptags|truncatechars:30 }}</td>
+				                          <td class="mailbox-date">{{ message.sent_at|timesince }}</td>
+				                          <td class="mailbox-star text-center"><a href="{% url 'messages_delete' message.id %}"><i class="fa fa-trash-o text-red"></i></a></td>
+				                        </tr>
+		                       		{% endfor %}   
+			                    
+		                        {% endif %}                           
+                            </tbody>
+                        </table>
+                    </div>
+                
                 </div><!-- /.box-body -->
-                <div class="box-footer">
-                  <div class="pull-right">
-                    <button class="btn btn-default"><i class="fa fa-pencil"></i> Draft</button>
-                    <button type="submit" class="btn btn-primary"><i class="fa fa-envelope-o"></i> Send</button>
-                  </div>
-                  <a href="{% url 'messages_inbox' %}" class="btn btn-default"><i class="fa fa-times"></i> Discard</a>
-                </div><!-- /.box-footer -->
-              </form>
+              
               </div><!-- /. box -->
             </div><!-- /.col -->
           </div><!-- /.row -->
@@ -285,31 +296,35 @@
       <div class="control-sidebar-bg"></div>
     </div><!-- ./wrapper -->
 
+   
     
-    <!-- Bootstrap 3.3.5 -->
-    <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
-    <!-- Slimscroll -->
+    
+     <!-- Slimscroll -->
     <script src="{% static "css/plugins/slimScroll/jquery.slimscroll.min.js" %}"></script>
     <!-- FastClick -->
     <script src="{% static "css/plugins/fastclick/fastclick.min.js" %}"></script>
 
-    <!-- iCheck -->
-    <script src="{% static "css/plugins/iCheck/icheck.min.js" %}"></script>
-    <!-- Bootstrap WYSIHTML5 -->
-    <script src="{% static "css/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js" %}"></script>
-    <script src="{% static "js/zabuto_calendar.js" %}"></script>
+    
+    <!-- Page Script -->
+    <script src="{% static "css/plugins/datatables/jquery.dataTables.min.js" %}"></script>
+	<script src="{% static "css/plugins/datatables/dataTables.bootstrap.min.js" %}"></script>
+	<script src="{% static "js/zabuto_calendar.js" %}"></script>
+	<!-- Bootstrap 3.3.5 -->
+    <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
 
-   <script>
-      $('#id_body').wysihtml5({
-  "font-styles": true, //Font styling, e.g. h1, h2, etc. Default true
-  "emphasis": true, //Italics, bold, etc. Default true
-  "lists": true, //(Un)ordered lists, e.g. Bullets, Numbers. Default true
-  "html": false, //Button which allows you to edit the generated HTML. Default false
-  "link": true, //Button to insert a link. Default true
-  "image": true, //Button to insert an image. Default true,
-  "color": false //Button to change color of font  
-});
-     
+    <script>
+      
+		 $(function () {
+		        $("#example1").DataTable();
+		        $('#example2').DataTable({
+		            "paging": true,
+		            "lengthChange": true,
+		            "searching": true,
+		            "ordering": true,
+		            "info": true,
+		            "autoWidth": true
+		        });
+		    });
     </script>
     <script type="application/javascript">
   $(document).ready(function () {

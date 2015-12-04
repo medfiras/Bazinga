@@ -124,7 +124,7 @@ TEMPLATE_DIRS = (
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
-    'django_messages.context_processors.inbox',
+    'private_messages.context_processors.inbox',
     'django.contrib.auth.context_processors.auth',
     'django.core.context_processors.request',
     'bazinga.context_processors.details',
@@ -132,6 +132,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 BOOTSTRAP_ADMIN_SIDEBAR_MENU = True
+
+PRIVATE_MESSAGES_ADMIN_PANEL = True
 
 INSTALLED_APPS = (
     # 'autocomplete_light',
@@ -147,8 +149,8 @@ INSTALLED_APPS = (
     'accounts',
     'guardian',
     # 'projects',
-    'easy_thumbnails',
-    'django_messages',
+    'easy_thumbnails',    
+    'private_messages',
     'widget_tweaks',
     'todolist',
     'filer',

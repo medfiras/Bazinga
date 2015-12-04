@@ -3,7 +3,7 @@ Django==1.7
 Pillow==2.8.1
 argparse==1.2.1
 django-guardian==1.2.5
-django-messages==0.5.1
+#django-messages==0.5.1
 #django-mysql==0.1.8
 django-userena==1.4.0
 django-widget-tweaks==1.3

@@ -1,4 +1,4 @@
-{% extends "django_messages/base.html" %}
+{% extends "private_messages/base.html" %}
 {% load i18n %}
 {% load url from future %}
 {% load staticfiles %}
@@ -38,7 +38,7 @@
           <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
             <li>Mailbox</li>
-            <li class="active">Trash</li>
+            <li class="active">Outbox</li>
           </ol>
         </section>
 
@@ -56,10 +56,10 @@
                 </div>
                 <div class="box-body no-padding">
                   <ul class="nav nav-pills nav-stacked">
-                    <li><a href="{% url 'messages_inbox' %}"><i class="fa fa-inbox"></i> Inbox <span class="label label-primary pull-right">{{ messages_inbox_count }}</span></a></li>
-                    <li><a href="{% url 'messages_outbox' %}"><i class="fa fa-envelope-o"></i> Sent</a></li>
+                    <li><a href="#"><i class="fa fa-inbox"></i> Inbox <span class="label label-primary pull-right">{{ messages_inbox_count }}</span></a></li>
+                    <li class="active"><a href="{% url 'messages_outbox' %}"><i class="fa fa-envelope-o"></i> Sent</a></li>
                     <li><a href="#"><i class="fa fa-file-text-o"></i> Drafts</a></li>                    
-                    <li class="active"><a href="{% url 'messages_trash' %}"><i class="fa fa-trash-o"></i> Trash</a></li>
+                    <li><a href="{% url 'messages_trash' %}"><i class="fa fa-trash-o"></i> Trash</a></li>
                   </ul>
                 </div><!-- /.box-body -->
               </div><!-- /. box -->
@@ -78,7 +78,7 @@
             <div class="col-md-9">
               <div class="box box-primary">
                 <div class="box-header with-border">
-                  <h3 class="box-title">Trash</h3>
+                  <h3 class="box-title">Inbox</h3>
                   <!-- <div class="box-tools pull-right">
                     <div class="has-feedback">
                       <input type="text" class="form-control input-sm" placeholder="Search Mail">
@@ -91,25 +91,21 @@
                         <table class="table table-bordered table-striped table-hover" id="example2">
 
                             <thead>
-                                <tr>
-                                    <th class="col-sm-1 text-center">Read</th>                                    
-                                    <th class="col-sm-2 text-center">Sender</th>
-                                    <th class="col-sm-3 text-center">Subject</th>
-                                    <th class="col-sm-3 text-center">Message</th>
+                                <tr>                                    
+                                    <th class="col-sm-2 text-center">{% trans "Recipient" %}</th>
+                                    <th class="col-sm-3 text-center">{% trans "Subject" %}</th>                                    
                                     <th class="col-sm-2 text-center">Date Time</th>
-                                    <th class="col-sm-1 text-center">Undelete</th>
+                                    <th class="col-sm-1 text-center">Delete</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% if message_list %}
                                     {% for message in message_list %}
-                                        <tr>
-                                          <td class="text-center"><i class="fa {% if message.new %}fa-folder{% else %}fa-folder-open{% endif %} text-blue   "></i></td>                                       
-                                          <td class="mailbox-name"><a href="{{message.get_absolute_url }}">{{ message.sender }}</a></td>
-                                          <td class="mailbox-subject">{% if message.new %}<b>{% endif %}{{ message.subject|truncatechars:30  }}{% if message.new %}</b>{% endif %}</td>
-                                          <td class="mailbox-attachment">{{ message.body|striptags|truncatechars:30 }}</td>
+                                        <tr>                                          
+                                          <td class="mailbox-name"><a href="{% url 'userena_profile_detail' message.recipient %}">{{ message.recipient }}</a></td>
+                                          <td class="mailbox-subject"><a href="{{ message.get_absolute_url }}">{{ message.subject }}</a></td>
                                           <td class="mailbox-date">{{ message.sent_at|timesince }}</td>
-                                          <td class="mailbox-star text-center"><a href="{% url 'messages_undelete' message.id %}"><i class="fa fa-undo text-green"></i></a></td>
+                                          <td class="mailbox-star text-center"><a href="{% url 'messages_delete' message.id %}?next={% url 'messages_outbox' %}"><i class="fa fa-trash-o text-red"></i></a></td>
                                         </tr>
                                     {% endfor %}   
                                 
