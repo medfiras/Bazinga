@@ -18,6 +18,10 @@ from events import settings as events_settings
 
 from events.utils import generate_sha1, get_datetime_now
 
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+from .tasks import *
+
 
 def upload_to_mugshot(instance, filename):
     """
@@ -163,6 +167,18 @@ class Event(models.Model):
         blank=True, null=True,
     )
 
+    external_link = models.URLField(
+        max_length=300,
+        verbose_name=_('External link'),
+        null=True, blank=True,
+    )
+
+    hashtag = models.CharField(
+        max_length=50,
+        blank=True, 
+        default=''
+    )
+
     start = models.DateTimeField(
         default=timezone.now(),
         verbose_name=_('Start date'),
@@ -284,13 +300,6 @@ class Event(models.Model):
                                     help_text=_('An event image displayed in your event page.'),
                                     null=True,)
 
-    # image = models.ImageField(
-    #     upload_to='event',
-    #     verbose_name=_('Image'),
-    #     related_name='event_images',
-    #     null=True, blank=True,
-    # )
-
     def __unicode__(self):
         if self.template_name:
             return '{0} ({1})'.format(self.template_name, ugettext('Template'))
@@ -348,6 +357,24 @@ class Event(models.Model):
         """        
         if self.image:
             return self.image.url
+
+
+class EventComment(models.Model):
+    """Comments in Event."""
+
+    user = models.ForeignKey('auth.User')
+    # user = models.ForeignKey(User)
+    event = models.ForeignKey(Event)
+    created_on = models.DateTimeField(auto_now_add=True)
+    comment = models.TextField()
+
+    class Meta:
+        ordering = ['id']
+
+    def __unicode__(self):        
+        return '{0} ({1})'.format(self.comment, date(self.created_on))
+
+
 
 
 class Guest(models.Model):
@@ -422,3 +449,37 @@ class Guest(models.Model):
         elif self.name or self.email:
             return '{0} - {1}'.format(self.name or self.email, self.event)
         return '{0} - {1}'.format(ugettext('anonymous'), self.event)
+
+
+@receiver(post_save, sender=EventComment, dispatch_uid='email_event_owner_on_add_comment_signal')
+def email_event_owner_on_add_comment(sender, instance, **kwargs):
+    """Email event owner when a comment is added to event."""
+    subject = '[Event] User %s commented on event "%s"'
+    email_template = 'events/email/owner_notification_on_add_comment.txt'
+    event = instance.event
+    owner = instance.event.created_by
+        
+    comments_mail = EventComment.objects.order_by().filter(event=event.id).values_list('user').distinct()
+    comments_mail = [comments_mail]
+    user_to=[]
+    
+    for x in comments_mail:
+        for a in x:
+            user_to.append(a[0])            
+
+    # for user_mail in comments_mail:
+    #     recipients_list = user_mail.
+    # event_url = reverse('event.get_absolute_url', kwargs={'slug': event.slug})
+    event_url = reverse('event_detail', kwargs={
+            'slug': event.slug,
+            'year': '{0:04d}'.format(event.start.year),
+            'month': '{0:02d}'.format(event.start.month),
+            'day': '{0:02d}'.format(event.start.day),
+        })
+    ctx_data = {'event': event, 'owner': owner, 'user': comments_mail,
+                'comment': instance.comment, 'event_url': event_url}
+    # if owner.userprofile.receive_email_on_add_event_comment:
+    subject = subject % (instance.user.get_full_name(),
+                         instance.event.title)
+    send_mail_comment(subject=subject, recipients_list=user_to,
+                         email_template=email_template, data=ctx_data)
