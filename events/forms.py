@@ -2,7 +2,8 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from .models import Event, Guest
+from .models import Event, Guest, EventComment
+from django.forms import ModelForm
 
 
 class EventForm(forms.ModelForm):
@@ -118,3 +119,16 @@ class GuestForm(forms.ModelForm):
     class Meta:
         model = Guest
         fields = ('name', 'email', 'phone', 'number_of_seats', 'message')
+
+
+class EditItemForm(ModelForm):
+    # The picklist showing the users to which a new task can be assigned
+    # must find other members of the groups the current list belongs to.
+    def __init__(self, *args, **kwargs):
+        super(EditItemForm, self).__init__(*args, **kwargs)
+        # self.fields['assigned_to'].queryset = User.objects.filter(groups__in=[self.instance.list.team])
+
+    class Meta:
+        model = EventComment
+        exclude = ('created_on', 'user','event',)
+

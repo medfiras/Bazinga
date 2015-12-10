@@ -44,6 +44,18 @@
 
         <!-- Main content -->
         <section class="content">
+          {% if messages %}
+              {% for message in messages %}
+                <div class="row">
+                  <div class="col-md-3"></div>
+                  <div class="alert alert-{{ message.tags }} alert-dismissable col-md-6">
+                    <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                    {{ message }}
+                  </div>
+                  <div class="col-md-3"></div>
+                </div>
+              {% endfor %}
+            {% endif %}
           <div class="row">
             <div class="col-md-3">
               <a href="{% url 'messages_inbox' %}" class="btn btn-primary btn-block margin-bottom">Back to Inbox</a>
@@ -58,7 +70,7 @@
                   <ul class="nav nav-pills nav-stacked">
                     <li class="active"><a href="{% url 'messages_inbox' %}"><i class="fa fa-inbox"></i> Inbox <span class="label label-primary pull-right">{{ messages_inbox_count }}</span></a></li>
                     <li><a href="{% url 'messages_outbox' %}"><i class="fa fa-envelope-o"></i> Sent</a></li>
-                    <li><a href="#"><i class="fa fa-file-text-o"></i> Drafts</a></li>                    
+                    <li><a href="{% url 'messages_draft' %}"><i class="fa fa-file-text-o"></i> Drafts</a></li>                    
                     <li><a href="{% url 'messages_trash' %}"><i class="fa fa-trash-o"></i> Trash</a></li>
                   </ul>
                 </div><!-- /.box-body -->
@@ -104,8 +116,8 @@
                 </div><!-- /.box-body -->
                 <div class="box-footer">
                   <div class="pull-right">
-                    <button class="btn btn-default"><i class="fa fa-pencil"></i> Draft</button>
-                    <button type="submit" class="btn btn-primary"><i class="fa fa-envelope-o"></i> Send</button>
+                    <button type="submit" class="btn btn-default" name="draft"><i class="fa fa-pencil"></i> Draft</button>
+                    <button type="submit" class="btn btn-primary" name="sent"><i class="fa fa-envelope-o"></i> Send</button>
                   </div>
                   <a href="{% url 'messages_inbox' %}" class="btn btn-default"><i class="fa fa-times"></i> Discard</a>
                 </div><!-- /.box-footer -->

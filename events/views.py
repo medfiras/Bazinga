@@ -17,9 +17,14 @@ from django.views.generic import (
     UpdateView,
 )
 
-from .forms import EventForm, GuestForm
-from .models import Event, Guest
+from .forms import EventForm, GuestForm, EditItemForm
+from .models import Event, Guest, EventComment
 from .signals import post_guest_create
+
+from django.shortcuts import get_object_or_404
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.shortcuts import render_to_response
+from django.template import RequestContext
 
 
 #--------#
@@ -237,3 +242,86 @@ class GuestDeleteView(StaffMixin, GuestViewMixin, GuestSecurityMixin,
                       DeleteView):
     """Delete view to remove the relevant guest."""
     pass
+
+
+
+
+def view_event(request, year, month, day, slug):
+    """
+    View event details.
+    """
+    event = get_object_or_404(Event, slug=slug)
+    comment_list = EventComment.objects.filter(event=event.id)
+
+    # if request.user.is_staff:
+
+    auth_ok = 1
+    if request.POST:            
+        form = EditItemForm(request.POST, instance=event)            
+        if form.is_valid():            
+
+            # Also save submitted comment, if non-empty
+            if request.POST['comment']:
+                c = EventComment(
+                    user=request.user,
+                    event=event,
+                    comment=request.POST['comment'],
+                )
+                c.save()
+
+                # And email comment to all people who have participated in this thread.
+                # email_subject = render_to_string("events/email/owner_notification_on_add_comment.txt", {'event': event})
+                # email_body = render_to_string("events/email/owner_notification_on_add_comment.txt",
+                #                               {'event': event, 'body': request.POST['comment'],
+                #                                'site': current_site, 'user': request.user})
+
+                # # Get list of all thread participants - task creator plus everyone who has commented on it.
+                # recip_list = []
+                # recip_list.append(task.created_by.email)
+                # commenters = Comment.objects.filter(task=task)
+                # for c in commenters:
+                #     recip_list.append(c.author.email)
+                # # Eliminate duplicate emails with the Python set() function
+                # recip_list = set(recip_list)
+
+                # # Send message
+                # try:
+                #     send_mail(email_subject, email_body, task.created_by.email, recip_list, fail_silently=False)
+                #     messages.success(request, "Comment sent to thread participants.")
+
+                # except:
+                #     messages.error(request, "Comment saved but mail not sent. Contact your administrator.")
+
+            # messages.success(request, "The event has been edited.")
+
+            return HttpResponseRedirect(reverse('event_detail', kwargs={
+                                                    'slug': event.slug,
+                                                    'year': '{0:04d}'.format(event.start.year),
+                                                    'month': '{0:02d}'.format(event.start.month),
+                                                    'day': '{0:02d}'.format(event.start.day),
+                                                }))
+    else:       
+        form = EditItemForm(instance=event)          
+        # if task.due_date:
+        #     thedate = task.due_date
+        # else:
+        #     thedate = datetime.datetime.now()    
+
+
+
+    paginator = Paginator(comment_list, 20) # Show 25 comments per page
+    # paginator.orphans = int(5)
+    paginator.range = range(5)
+
+    page = request.GET.get('page')
+    try:
+        comments = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        comments = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        comments = paginator.page(paginator.num_pages)
+
+
+    return render_to_response('events/event_detail.html', locals(), context_instance=RequestContext(request))

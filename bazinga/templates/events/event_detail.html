@@ -3,105 +3,176 @@
 {% load url from future %}
 
 {% block content %}
-<h1>{{ object }}</h1>
+<h1>{{ event }}</h1>
 <table>
     <tr>
         <th>{% trans "Title" %}</th>
-        <td>{{ object.title }}</td>
+        <td>{{ event.title }}</td>
     </tr>
-    {% if object.description %}
+    {% if event.description %}
         <tr>
             <th>{% trans "Description" %}</th>
-            <td>{{ object.description }}</td>
+            <td>{{ event.description }}</td>
         </tr>
     {% endif %}
     <tr>
         <th>{% trans "Starting" %}</th>
-        <td>{{ object.start }}</td>
+        <td>{{ event.start }}</td>
     </tr>
     <tr>
         <th>{% trans "Ending" %}</th>
-        <td>{{ object.end }}</td>
+        <td>{{ event.end }}</td>
     </tr>
     <tr>
         <th>{% trans "Venue" %}</th>
-        <td>{{ object.venue }}</td>
+        <td>{{ event.venue }}</td>
     </tr>
-    {% if object.street %}
+    {% if event.street %}
         <tr>
             <th>{% trans "Street" %}</th>
-            <td>{{ object.street }}</td>
+            <td>{{ event.street }}</td>
         </tr>
     {% endif %}
-    {% if object.city %}
+    {% if event.city %}
         <tr>
             <th>{% trans "City" %}</th>
-            <td>{{ object.city }}</td>
+            <td>{{ event.city }}</td>
         </tr>
     {% endif %}
-    {% if object.zip %}
+    {% if event.zip %}
         <tr>
             <th>{% trans "ZIP code" %}</th>
-            <td>{{ object.zip }}</td>
+            <td>{{ event.zip }}</td>
         </tr>
     {% endif %}
-    {% if object.country %}
+    {% if event.country %}
         <tr>
             <th>{% trans "Country" %}</th>
-            <td>{{ object.country }}</td>
+            <td>{{ event.country }}</td>
         </tr>
     {% endif %}
-    {% if object.contact_person %}
+    {% if event.contact_person %}
         <tr>
             <th>{% trans "Contact" %}</th>
-            <td>{{ object.contact_person }}</td>
+            <td>{{ event.contact_person }}</td>
         </tr>
     {% endif %}
-    {% if object.contact_email %}
+    {% if event.contact_email %}
         <tr>
             <th>{% trans "Email" %}</th>
-            <td>{{ object.contact_email }}</td>
+            <td>{{ event.contact_email }}</td>
         </tr>
     {% endif %}
-    {% if object.contact_phone %}
+    {% if event.contact_phone %}
         <tr>
             <th>{% trans "Phone" %}</th>
-            <td>{{ object.contact_phone }}</td>
+            <td>{{ event.contact_phone }}</td>
         </tr>
     {% endif %}
-    {% if object.available_seats and not object.hide_available_seats %}
+    {% if event.available_seats and not event.hide_available_seats %}
         <tr>
             <th>{% trans "Available seats" %}</th>
-            <td>{{ object.available_seats }}</td>
+            <td>{{ event.available_seats }}</td>
         </tr>
     {% endif %}
-    {% if object.max_seats_per_guest %}
+    {% if event.max_seats_per_guest %}
         <tr>
             <th>{% trans "Maximum amount of seats per guest" %}</th>
-            <td>{{ object.max_seats_per_guest }}</td>
+            <td>{{ event.max_seats_per_guest }}</td>
         </tr>
     {% endif %}
     
         <tr>
             <th>{% trans "Free seats" %}</th>
-            <td>{{ object.get_free_seats }}</td>
+            <td>{{ event.get_free_seats }}</td>
         </tr>
         <tr>
             <th>{% trans "Image" %}</th>
-            <td><img src="{{ object.get_image_url }}" /></td>
-        </tr>
+            <td><img src="{{ event.get_image_url }}" /></td>
+        </tr>       
 </table>
+<div class="box box-warning direct-chat direct-chat-primary">
+                          <div class="box-header with-border">
+                            <h3 class="box-title">Comments on this event</h3>
+                            <div class="box-tools pull-right">
+                              <span data-toggle="tooltip" title="3 New Messages" class="badge bg-yellow"></span>
+                              <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                              <!-- <button class="btn btn-box-tool" data-toggle="tooltip" title="Contacts" data-widget="chat-pane-toggle"><i class="fa fa-comments"></i></button>
+                              <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button> -->
+                            </div>
+                          </div><!-- /.box-header -->
+                          <div class="box-body">
+                            <!-- Conversations are loaded here -->
+                            <div class="direct-chat-messages">
+
+                                  
+                              <!-- Message. Default to the left -->
+                              {% for comment in comments %}
+                                  <div class="direct-chat-warning {% if request.user.username == comment.user.username %} right {% else %} left {% endif %}">
+                                    <div class="direct-chat-info clearfix">
+                                      <span class="direct-chat-name pull-left">{{ comment.user.first_name }} {{ comment.user.last_name }} (<a href="{% url 'userena_profile_detail' comment.user.username %}">{{ comment.user.username }}</a>)</span>
+                                      <span class="direct-chat-timestamp pull-right">{{ comment.created_on|date:"d M Y - P" }}</span>
+                                    </div><!-- /.direct-chat-info -->
+                                    <a href="{% url 'userena_profile_detail' comment.user.username %}"><img class="direct-chat-img" src="{{ comment.user.profile.get_mugshot_url }}" alt="message user image"></a><!-- /.direct-chat-img -->
+                                    <div class="direct-chat-text">
+                                     {{ comment.comment|safe|urlize|linebreaks }}
+                                    </div><!-- /.direct-chat-text -->
+                                  </div><!-- /.direct-chat-msg -->
+                              {% empty %}
+                                  <p>No Comments</p>
+                              {% endfor %}
+                         
+                            </div><!--/.direct-chat-messages-->
+                            <ul class="pagination">
+                              
+                              
+                              {% if comments.has_previous %}
+                                  <li><a href="?page={{ comments.previous_page_number }}">&laquo; </a></li>
+                                  {% else %}
+                                  <li class="disabled"><a href="">&laquo; </a></li>
+                              {% endif %}
+
+                              {% for num in comments.paginator.page_range %}
+                                {% ifequal num comments.number %}
+                                  <li class="active"><a href="">{{ num }}</a></li>
+                                {% else %}
+                                  <li><a href="?page={{ num }}"> {{ num }}</a></li>
+                                {% endifequal %} 
+                              {% endfor %}
+
+                                
+                              {% if comments.has_next %}
+                                <li><a href="?page={{ comments.next_page_number }}"> &raquo;</a></li>
+                              {% else %}
+                                  <li class="disabled"><a href=""> &raquo;</a></li>  
+                              {% endif %}
+                               <li class="disabled">
+                                  <span> Page {{ comments.number }} of {{ comments.paginator.num_pages }}</span>
+                              </li>
+                            </ul>
+                            <form action="" method="POST">
+            {% csrf_token %}
+                            <fieldset class="scheduler-border">
+                                <!-- <legend class="scheduler-border">Add comment :</legend>
+                                
+                                <textarea id="comment" name="comment" class="form-control"></textarea>
+                                <input class="btn btn-primary form-control" type="submit" value="Send Comment"> -->
+                                {{form.as_p}}
+                                <input class="btn btn-primary form-control" type="submit" value="Send Comment">
+                              </fieldset>
+                          </form>
+
 {% if user.is_staff %}
     <ul>
-        {% for guest in object.guests.all %}
-            <li><a href="{% url "guest_detail" pk=guest.pk event_slug=object.slug %}">{{ guest }}</a></li>
+        {% for guest in event.guests.all %}
+            <li><a href="{% url "guest_detail" pk=guest.pk event_slug=event.slug %}">{{ guest }}</a></li>
         {% endfor %}
     </ul>
 {% else %}
-    {% if object.get_free_seats < 1 and object.is_bookable %}
+    {% if event.get_free_seats < 1 and event.is_bookable %}
         <p>{% trans "We're sorry. The event is fully booked." %}</p>
-    {% elif object.is_bookable %}
-        <a href="{% url "guest_create" event_slug=object.slug %}">{% trans "Participate" %}</a>
+    {% elif event.is_bookable %}
+        <a href="{% url "guest_create" event_slug=event.slug %}">{% trans "Participate" %}</a>
     {% endif %}
 {% endif %}
 {% endblock %}

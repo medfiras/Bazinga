@@ -61,14 +61,7 @@ urlpatterns = patterns('',
 
     url(r'^(?P<username>[\@\.\w-]+)/password/complete/$', userena_views.direct_to_user_template, {'template_name': 'userena/password_form.html'}, name='userena_password_change_complete'),
     url(r'^(?P<username>[\@\.\w-]+)/email/complete/$', userena_views.direct_to_user_template, {'template_name': 'userena/email_form.html'}, name='userena_email_change_complete'),
-    # url(r'^(?P<username>[\@\.\w-]+)/password/$', userena_views.direct_to_user_template, {'template_name': 'userena/profile_detail.html'}, name='userena_password_change'),
-
-    url(r'^todo/', todolist, name='todo'),
-    url(r'^addtodo/$', addTodo, name='addtodo'),
-    url(r'^todofinish/(?P<id>\d+)/$', todofinish, name='finish'),
-    url(r'^todobackout/(?P<id>\d+)/$', todoback,  name='backout'),
-    url(r'^updatetodo/(?P<id>\d+)/$', updatetodo, name='update'),
-    url(r'^tododelete/(?P<id>\d+)/$', tododelete, name='delete'),
+    # url(r'^(?P<username>[\@\.\w-]+)/password/$', userena_views.direct_to_user_template, {'template_name': 'userena/profile_detail.html'}, name='userena_password_change'),   
 
     # url(r'^autocomplete/', include('autocomplete_light.urls')),
 

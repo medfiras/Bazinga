@@ -115,7 +115,7 @@ def inbox_count_for(user):
     returns the number of unread messages for the given user but does not
     mark them seen
     """
-    return Message.objects.filter(recipient=user, read_at__isnull=True, recipient_deleted_at__isnull=True).count()
+    return Message.objects.filter(recipient=user, read_at__isnull=True, recipient_deleted_at__isnull=True, draft_at__isnull=True).count()
 
 # fallback for email notification if django-notification could not be found
 if "notification" not in settings.INSTALLED_APPS and getattr(settings, 'PRIVATE_MESSAGES_NOTIFY', True):

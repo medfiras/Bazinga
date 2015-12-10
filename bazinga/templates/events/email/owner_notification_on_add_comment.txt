@@ -1,0 +1,14 @@
+Hey there {{ user.first_name }} {{ user.last_name }} ( {{ user.username }} ),
+
+This email was generated automatically to inform you that {{ user.username }}
+added a comment on the event you are organizing [1].
+
+The comment was:
+
+"{{ comment }}"
+
+Cheers!
+
+Your lovely Bazinga bot.
+
+[1] {{ SITE_URL}}{{ event_url }}

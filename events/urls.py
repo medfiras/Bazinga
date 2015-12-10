@@ -12,7 +12,7 @@ from events.views import (
     GuestDeleteView,
     GuestDetailView,
     GuestUpdateView,
-    StaffDashboardView,
+    StaffDashboardView,    
 )
 
 
@@ -44,9 +44,17 @@ urlpatterns = patterns(
         EventUpdateView.as_view(),
         name='event_update'),
 
+    url(r'^(?P<year>\d{4})/(?P<month>\d{2})/(?P<day>\d{2})/(?P<slug>[-\w]+)/$', 'events.views.view_event', name='event_detail'),
+    
     url(r'^(?P<year>\d{4})/(?P<month>\d{2})/(?P<day>\d{2})/(?P<slug>[-\w]+)/$',
         EventDetailView.as_view(),
         name='event_detail'),
+
+    
+
+    # url(r'^(?P<year>\d{4})/(?P<month>\d{2})/(?P<day>\d{2})/(?P<slug>[-\w]+)/$',
+    #     EventCommentView.as_view(),
+    #     name='event_detail'),
 
     url(r'^(?P<event_slug>[-\w]+)/guest/create/$',
         GuestCreateView.as_view(),

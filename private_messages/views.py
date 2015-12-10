@@ -58,6 +58,21 @@ def trash(request, template_name='private_messages/trash.html'):
         'message_list': message_list,
     }, context_instance=RequestContext(request))
 
+
+@login_required
+def draft(request, template_name='private_messages/draft.html'):
+    """
+    Displays a list of draft messages.
+    Optional arguments:
+        ``template_name``: name of the template to use
+    Hint: A Cron-Job could periodicly clean up old messages, which are deleted
+    by sender and recipient.
+    """
+    message_list = Message.objects.draft_for(request.user)
+    return render_to_response(template_name, {
+        'message_list': message_list,
+    }, context_instance=RequestContext(request))
+
 @login_required
 def compose(request, recipient=None, form_class=ComposeForm,
         template_name='private_messages/compose.html', success_url=None, recipient_filter=None):

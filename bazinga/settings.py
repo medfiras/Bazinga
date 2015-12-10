@@ -152,8 +152,7 @@ INSTALLED_APPS = (
     'easy_thumbnails',    
     'private_messages',
     'widget_tweaks',
-    'todolist',
-    'filer',
+    'todolist',    
     'events',
     # 'userena.contrib.umessages',
     # Uncomment the next line to enable the admin:
@@ -165,7 +164,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'actstream',
     'pagination_bootstrap',
-    'tagulous',
+    'tagulous',    
 )
 
 ACTSTREAM_SETTINGS = {
