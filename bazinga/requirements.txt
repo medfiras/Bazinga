@@ -14,3 +14,4 @@ wsgiref==0.1.2
 bootstrap-admin
 django-activity-stream
 django-tagulous
+django-import-export

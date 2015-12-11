@@ -7,10 +7,12 @@ except ImportError:
     from django.core import *
 from django.template.loader import render_to_string
 
-from celery.task import task
+# from celery.task import task
+from django.contrib import messages
+# from django.template import RequestContext
 
 
-@task
+# @task
 def send_mail_comment(subject, recipients_list, sender=None,
                    message=None, email_template=None, data=None,
                    headers=None):
@@ -58,10 +60,17 @@ def send_mail_comment(subject, recipients_list, sender=None,
 
         if not sender:
             email = EmailMessage(subject=subject, body=message,
-                                 from_email=settings.FROM_EMAIL,
+                                 from_email=settings.EMAIL_HOST_USER,
                                  to=[to], headers=headers)
         else:
             email = EmailMessage(subject=subject, body=message,
                                  from_email=sender, to=[to], cc=[sender],
                                  headers=headers)
-        email.send()
+        try:
+            email.send()
+            # messages.success(request, "Comment sent to thread participants.")
+
+        except:
+            print "Comment saved but mail not sent. Contact your administrator."
+            # messages.error(request, "Comment saved but mail not sent. Contact your administrator.")
+        

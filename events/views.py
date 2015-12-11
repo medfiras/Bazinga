@@ -301,12 +301,7 @@ def view_event(request, year, month, day, slug):
                                                     'day': '{0:02d}'.format(event.start.day),
                                                 }))
     else:       
-        form = EditItemForm(instance=event)          
-        # if task.due_date:
-        #     thedate = task.due_date
-        # else:
-        #     thedate = datetime.datetime.now()    
-
+        form = EditItemForm(instance=event)        
 
 
     paginator = Paginator(comment_list, 20) # Show 25 comments per page
